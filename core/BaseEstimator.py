@@ -1,11 +1,12 @@
+from metrics.RegressionMetrics import mean_squared_error
+
 class BaseEstimator:
   '''
   Base class for all algorithms for example: linear regression, logistic regression, decision tree, random forest, etc.
   '''
-  def __init__(self, algorithm_name, algorithm_type, algorithm_params):
+  def __init__(self, algorithm_name, algorithm_type,):
     self.algorithm_name = algorithm_name
     self.algorithm_type = algorithm_type
-    self.algorithm_params = algorithm_params
   
   def fit(self, X, y):
     '''
@@ -29,7 +30,7 @@ class BaseEstimator:
     '''
     raise NotImplementedError('Predict method must be implemented in the subclass')
   
-  def evaluate(self, X, y, metric):
+  def evaluate(self, X, y, metric=mean_squared_error):
     '''
     Evaluate the model on the given test data.
 
@@ -41,26 +42,6 @@ class BaseEstimator:
     Returns:
       - score: Evaluation score (float)
     '''
-    raise NotImplementedError('Evaluate method must be implemented in the subclass')
+    predictions = self.predict(X)
+    return metric(y_true=y, y_pred=predictions)
   
-  def get_parameters(self):
-    '''
-    Get the parameters of the model.
-
-    Returns:
-      - parameters: Dictionary of model parameters
-    '''
-    return self.algorithm_params
-  
-  def get_algorithm_details(self):
-    '''
-    Get the details of the model.
-
-    Returns:
-      - details: Dictionary of model details
-    '''
-    return {
-      'name': self.algorithm_name,
-      'type': self.algorithm_type,
-      'parameters': self.algorithm_params
-    }
