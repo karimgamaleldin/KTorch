@@ -8,7 +8,7 @@ class RidgeRegression(BaseEstimator):
   ||y - Xw||^2_2 + alpha * ||w||^2_2
   '''
   def __init__(self,  algorithm_name='Ridge Regressor', algorithm_type='linear_model', alpha=1.0):
-    super().__init__(algorithm_name=algorithm_name, algorithm_type=algorithm_type)
+    super().__init__(algorithm_name=algorithm_name, algorithm_type=algorithm_type, base_metric=mean_squared_error)
     self.algorithm_params = {}
     self.algorithm_params['weights'] = None
     self.algorithm_params['bias'] = None

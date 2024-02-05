@@ -4,9 +4,10 @@ class BaseEstimator:
   '''
   Base class for all algorithms for example: linear regression, logistic regression, decision tree, random forest, etc.
   '''
-  def __init__(self, algorithm_name, algorithm_type,):
+  def __init__(self, algorithm_name, algorithm_type, base_metric):
     self.algorithm_name = algorithm_name
     self.algorithm_type = algorithm_type
+    self.base_metric = base_metric
   
   def fit(self, X, y):
     '''
@@ -30,7 +31,7 @@ class BaseEstimator:
     '''
     raise NotImplementedError('Predict method must be implemented in the subclass')
   
-  def evaluate(self, X, y, metric=mean_squared_error):
+  def evaluate(self, X, y, metric=None):
     '''
     Evaluate the model on the given test data.
 
@@ -42,6 +43,8 @@ class BaseEstimator:
     Returns:
       - score: Evaluation score (float)
     '''
+    if metric is None:
+      metric = self.base_metric
     predictions = self.predict(X)
     return metric(y_true=y, y_pred=predictions)
   

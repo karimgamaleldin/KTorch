@@ -9,7 +9,7 @@ class LinearRegression(BaseEstimator):
   A regular least squares linear regression model that inherits from the BaseEstimator class.
   '''
   def __init__(self, algorithm_name='Linear Regressor', algorithm_type='linear_model', fit_intercept=True):
-    super().__init__(algorithm_name, algorithm_type)
+    super().__init__(algorithm_name, algorithm_type, mean_squared_error)
     self.fit_intercept = fit_intercept
     self.algorithm_params = {}
     self.algorithm_params['fit_intercept'] = fit_intercept
