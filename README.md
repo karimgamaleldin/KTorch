@@ -18,3 +18,4 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
 ## Credits
 
 ## License
+The rest of the software is open source and licensed under the [MIT License](https://opensource.org/license/mit/)
