@@ -1,3 +1,5 @@
+import numpy as np
+
 def accuracy_score(y_true, y_pred):
   '''
   Compute the accuracy score.
