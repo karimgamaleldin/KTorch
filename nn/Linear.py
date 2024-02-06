@@ -1,6 +1,6 @@
 import numpy as np
 from nn.init import simpleUniformInitialization
-from auto_grad.engine import Parameter
+from parameter.Parameter import Parameter
 
 class Linear:
   '''

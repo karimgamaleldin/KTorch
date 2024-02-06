@@ -1,5 +1,5 @@
 import numpy as np
-from auto_grad.engine import Parameter
+from parameter.Parameter import Parameter
 from typing import List
 
 class SGD:
