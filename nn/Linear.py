@@ -1,6 +1,6 @@
 import numpy as np
 from nn.init import simpleUniformInitialization
-from parameter.Parameter import Parameter
+from autograd.Tensor import Tensor
 
 class Linear:
   '''
@@ -18,8 +18,8 @@ class Linear:
     self.in_features = in_features
     self.out_features = out_features
     self.shape = (out_features, in_features)
-    self.weight = Parameter(simpleUniformInitialization(self.shape)) # initialize the weights using the uniform distribution
-    self.bias = Parameter(simpleUniformInitialization((1,out_features), out_shape=(out_features))) if bias else None # initialize the bias using the uniform distribution if bias is True
+    self.weight = Tensor(simpleUniformInitialization(self.shape)) # initialize the weights using the uniform distribution
+    self.bias = Tensor(simpleUniformInitialization((1,out_features), out_shape=(out_features))) if bias else None # initialize the bias using the uniform distribution if bias is True
 
   def __call__(self, x):
     '''

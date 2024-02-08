@@ -1,38 +1,42 @@
-import numpy as np
-from nn.Linear import Linear
-# Assuming nn.init.simpleUniformInitialization and auto_grad.engine.Parameter are correctly imported
+from autograd.Tensor import Tensor
+import torch 
 
-# Create a linear layer with 3 input features and 2 output features
-layer = Linear(3, 1)
+a = Tensor([1.0, 2.0, 3.0], label='a')
+b = Tensor([1.0, 2.0, -3.0], label='b')
+c = Tensor([4.0, 5.0, 6.0], label='c')
+e = a * b; e.label = 'e' 
+d = e + c; d.label = 'd'
+L = d ** 2; L.label = 'L'
 
-# Print the weights and bias of the layer
-print(layer.parameters())
+print(a)
+print(b)
+print(c)
+print(d)
+print(e)
 
-# Create a random input tensor with 3 features
-x = np.array([[1, 2, 3]])
+print(L)
+L.backward()
+print(L.grad)
+print(d.grad)
+print(e.grad)
+print(a.grad)
+print(b.grad)
+print(c.grad)
 
-# Perform the forward pass of the linear layer
+a = Tensor([[1, 2], [3, 4]], label='a')
+b = Tensor([[5, 6], [7, 8]], label='b')
+c = a.matmul(b)
 
-out = layer(x)
+c.backward()
+print(a.grad)
+print(b.grad)
+print(c.grad)
 
-# Print the output of the linear layer
-print('out', out)
 
-# Perform the backward pass of the linear layer
-grad = np.array([[1]])
-dx = layer.backward(grad)
+a = torch.tensor([[1., 2.], [3., 4.]], requires_grad=True)
+b = torch.tensor([[5., 6.], [7., 8.]], requires_grad=True)
+c = a @ b
 
-# Print the gradient of the input tensor
-print('dx', dx)
-
-# Print the gradients of the parameters
-print(layer.parameters())
-
-# Expected output:
-# [array([[-0.068,  0.019,  0.022],
-#        [ 0.068, -0.019, -0.022]]), array([0.068, 0.019])]
-# out [ 0.014 -0.014]
-# dx [ 0.068 -0.019 -0.022]
-# [array([[0.068, 0.019, 0.022],
-#        [0.068, 0.019, 0.022]]), array([1, 1])]
-
+c.backward(gradient=torch.tensor([[1., 1.], [1., 1.]]))
+print(a.grad)
+print(b.grad)

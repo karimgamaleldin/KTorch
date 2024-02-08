@@ -1,9 +1,9 @@
 import numpy as np
-from parameter.Parameter import Parameter
+from autograd.Tensor import Tensor
 from typing import List
 
 class SGD:
-  def __init__(self, parameters: List[Parameter], lr=1e-3):
+  def __init__(self, parameters: List[Tensor], lr=1e-3):
     '''
     Initialize the optimizer with the parameters and the learning rate
     params:
