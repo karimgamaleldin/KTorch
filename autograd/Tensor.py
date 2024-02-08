@@ -206,3 +206,8 @@ class Tensor:
     out._backward = _backward
     return out
   
+  def _zero_grad(self):
+    '''
+    Zero the gradient of the tensor
+    '''
+    self.grad = np.zeros_like(self.data)
