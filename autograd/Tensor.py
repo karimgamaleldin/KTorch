@@ -211,3 +211,15 @@ class Tensor:
     Zero the gradient of the tensor
     '''
     self.grad = np.zeros_like(self.data)
+
+  def flatten(self, start_dim=1, end_dim=-1):
+    '''
+    Flatten the tensor
+    '''
+    t = self.data.reshape(start_dim, end_dim)
+    out = Tensor(t, _prev=(self,), _op='flatten', label=f"flatten({self.label})")
+    def _backward():
+      self.grad += out.grad.reshape(self.data.shape)
+
+    out._backward = _backward
+    return out
