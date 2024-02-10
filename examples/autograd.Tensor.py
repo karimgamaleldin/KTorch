@@ -1,4 +1,4 @@
-from autograd.Tensor import Tensor
+from autograd.engine import Tensor
 import torch 
 
 a = Tensor([1.0, 2.0, 3.0], label='a')

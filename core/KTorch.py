@@ -1,4 +1,4 @@
-from autograd.Tensor import Tensor
+from autograd.engine import Tensor
 import numpy as np 
 
 def sigmoid(x: Tensor) -> Tensor:

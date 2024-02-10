@@ -1,5 +1,5 @@
 from nn.init import simpleUniformInitialization
-from autograd.Tensor import Tensor
+from autograd.engine import Tensor
 from core import KTorch
 import nn
 
