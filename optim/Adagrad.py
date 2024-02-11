@@ -1,8 +1,9 @@
+from optim.Optim import Optim
 from autograd.engine import Tensor
 from typing import List
 import numpy as np
 
-class Adagrad:
+class Adagrad(Optim):
   '''
   The Adagrad optimizer inspired by the PyTorch api
   '''
@@ -16,7 +17,7 @@ class Adagrad:
     weight_decay: weight decay (L2 penalty) (default: 0)
     eps: term added to the denominator to improve numerical stability (default: 1e-10)
     '''
-    self.params = params
+    super().__init__(params)
     self.lr = lr
     self.lr_decay = lr_decay
     self.weight_decay = weight_decay
@@ -29,22 +30,14 @@ class Adagrad:
     Update the parameters using the gradients
     '''
     for i, param in enumerate(self.params):
+      # Temp value for the gradient, to not change the original gradient
+      g = param.grad
+      # add the weight decay
       if self.weight_decay != 0:
-        param.grad += self.weight_decay * param.data
+        g += self.weight_decay * param.data
       # update the accumulator value
-      self.accumulator_value[i] += param.grad**2
+      self.accumulator_value[i] += g**2
       # update the parameters
-      param.data -= self.lr * param.grad / (np.sqrt(self.accumulator_value[i]) + self.eps)
+      param.data -= self.lr * g / (np.sqrt(self.accumulator_value[i]) + self.eps)
     # update the learning rate
       self.lr *= 1 / (1 + self.lr_decay)
-
-
-  def zero_grad(self):
-    '''
-    Zero the gradients of the parameters
-    '''
-    for param in self.params:
-      param._zero_grad()
-
-
-

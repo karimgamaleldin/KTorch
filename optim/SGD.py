@@ -1,8 +1,9 @@
+from optim.Optim import Optim
 from autograd.engine import Tensor
 from typing import List
 import numpy as np
 
-class SGD:
+class SGD(Optim):
   '''
   The SGD optimizer inspired by the PyTorch api
   '''
@@ -17,7 +18,7 @@ class SGD:
       weight_decay: float: the weight decay (L2 penalty)
       nesterov: bool: enables Nesterov momentum
     '''
-    self.params = params
+    super().__init__(params)
     self.lr = lr
     self.prev_velocities = [np.zeros_like(param.data) for param in self.params] # momentum coefficients
     self.momentum = momentum
@@ -48,11 +49,3 @@ class SGD:
       
       # Update the parameters
       param.data -= self.lr * g
-
-  def zero_grad(self):
-    '''
-    Zero the gradients of the parameters
-    '''
-    for param in self.params:
-      param._zero_grad()
-    
