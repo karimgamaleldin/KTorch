@@ -79,3 +79,19 @@ def squared_epsilon_insensitive(y_true, y_pred, epsilon=0.1):
   error = y_true - y_pred # error term between the predictions and true value
   abs_error = np.abs(error)
   return np.mean(np.square(np.maximum(abs_error - epsilon, 0))) # Squared Epsilon-insensitive loss
+
+def r_squared(y_true, y_pred):
+  '''
+  Coefficient of determination (R^2)
+
+  Parameters:
+    - y_true: Ground truth target values
+    - y_pred: Predicted target values
+
+  Returns:
+    - score: R^2 score
+  '''
+  y_true_mean = np.mean(y_true)
+  ss_total = np.sum((y_true - y_true_mean) ** 2)
+  ss_residual = np.sum((y_true - y_pred) ** 2)
+  return round(1 - (ss_residual / ss_total), 2)

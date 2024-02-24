@@ -1,6 +1,6 @@
 from core.BaseEstimator import BaseEstimator
 from metrics.ClassificationMetrics import accuracy_score
-from metrics.DistanceMetrics import minkowski_distance
+from metrics.DistanceMetrics import minkowski_distance, manhattan_distance, euclidean_distance
 import numpy as np
 
 class KNeighborsClassifier(BaseEstimator):
@@ -37,8 +37,11 @@ class KNeighborsClassifier(BaseEstimator):
       - X: Input features (numpy array or pandas DataFrame)
       - y: Target values (numpy array or pandas Series)
     '''
+    assert len(X) == len(y), 'The number of input features and target values must be the same'
+
     self.data = np.array(X, dtype=np.float64) if isinstance(X, np.ndarray) else X.to_numpy().astype(np.float64)
     self.labels = np.array(y, dtype=np.float64) if isinstance(y, np.ndarray) else y.to_numpy().astype(np.float64)
+    
     print('K Nearest Neighbors Classifier model fitted successfully')
 
   def predict(self, X):
@@ -51,35 +54,41 @@ class KNeighborsClassifier(BaseEstimator):
     '''
     # Convert the input features to a numpy array with the correct dtype "np.float64"
     X = np.array(X, dtype=np.float64) if isinstance(X, np.ndarray) else X.to_numpy().astype(np.float64)
+
+    y_pred = []
+    for x in X:
+      x = x.reshape(1, -1)
+      if self.metric == 'minkowski':
+        distance = minkowski_distance(x, self.data, p=self.p)
+      elif self.metric == 'manhattan':
+        distance = manhattan_distance(x, self.data)
+      elif self.metric == 'euclidean':
+        distance = euclidean_distance(x, self.data)
+
+      # Get the indices of the k-nearest neighbors
+      idx = np.argsort(distance)[:self.n_neighbors]
+      # Get the labels of the k-nearest neighbors
+      idx_labels = self.labels[idx]
+
+      # Predict the target values for the input features
+      if self.weights == 'uniform':
+        y_pred.append(np.bincount(idx_labels.astype(int)).argmax())
+      elif self.weights == 'distance':
+        epsilon = 1e-12 # to avoid division by zero
+        weights = 1 / (distance[idx] + epsilon)
+        y_pred.append(np.bincount(idx_labels.astype(int), weights=weights).argmax()) 
     
-    # Compute the distance between each test point in X and each training point in self.data
-    distances = minkowski_distance(X, self.data, axis=1, p=self.p)
+    return np.array(y_pred)
 
-    # Get the indices of the k-nearest neighbors
-    indices = np.argsort(distances, axis=0)[:self.n_neighbors]
-
-    # Get the labels of the k-nearest neighbors
-    idx_labels = self.labels[indices] # obtain the labels of the k-nearest neighbors
-
-    # Predict the class of each test point
-    if self.weights == 'uniform':
-      y_pred = np.array([np.bincount(idx_labels[i]).argmax() for i in range(idx_labels.shape[0])])
-    else:
-      y_pred = []
-      epsilon = 1e-6 # to avoid division by zero
-      for i, (neighbors_indices, dist) in enumerate(zip(indices, distances)):
-        # Calculate the inverse of the distances
-        weights = 1 / (dist[:self.n_neighbors] + epsilon)
-
-        # Aggregate weights by class
-        class_weights = np.zeros(np.max(self.labels) + 1)
-        for idx, weight in zip(neighbors_indices, weights):
-          class_weights[self.labels[idx]] += weight
-
-        # Predict the class with the highest weight
-        y_pred.append(class_weights.argmax())
-      y_pred = np.array(y_pred)
-    return y_pred
-  
   def score(self, X, y):
-    pass 
+    '''
+    Evaluate the accuracy of the model on the input features and target values.
+
+    Params:
+      - X: Input features (numpy array or pandas DataFrame)
+      - y: Target values (numpy array or pandas Series)
+    Returns:
+      - score: Accuracy of the model (float)
+    '''
+    y_pred = self.predict(X)
+    return accuracy_score(y, y_pred) 

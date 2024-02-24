@@ -1,5 +1,5 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.RegressionMetrics import mean_squared_error
+from metrics.RegressionMetrics import mean_squared_error, r_squared
 from metrics.DistanceMetrics import minkowski_distance, manhattan_distance, euclidean_distance
 import numpy as np
 
@@ -80,5 +80,14 @@ class KNeighborsRegressor(BaseEstimator):
 
 
   def score(self, X, y):
-    pass  
+    '''
+    Compute the coefficient of determination R^2 of the prediction.
+    params:
+    - X: Input features (numpy array or pandas DataFrame)
+    - y: Target values (numpy array or pandas Series)
+    returns:
+    - score: R^2 of the prediction (float)
+    ''' 
+    y_pred = self.predict(X)
+    return r_squared(y, y_pred) # compute the R^2 score of the prediction
 
