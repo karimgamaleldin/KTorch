@@ -212,10 +212,12 @@ class Tensor:
     '''
     self.grad = np.zeros_like(self.data)
 
-  def flatten(self, start_dim=1, end_dim=-1):
+  def flatten(self, start_dim=None, end_dim=-1):
     '''
     Flatten the tensor
     '''
+    if start_dim is None:
+      start_dim = self.data.shape[0]
     t = self.data.reshape(start_dim, end_dim)
     out = Tensor(t, _prev=(self,), _op='flatten', label=f"flatten({self.label})")
     def _backward():

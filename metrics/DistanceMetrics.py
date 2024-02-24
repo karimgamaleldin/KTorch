@@ -1,6 +1,6 @@
 import numpy as np
 
-def euclidean_distance(x1, x2):
+def euclidean_distance(x1, x2, axis=1):
   '''
   Compute the Euclidean distance between two points.
 
@@ -11,9 +11,9 @@ def euclidean_distance(x1, x2):
   Returns:
     - distance: Euclidean distance between the two points (float)
   '''
-  return np.sqrt(np.sum((x1 - x2) ** 2))
+  return np.sqrt(np.sum((x1 - x2) ** 2, axis=axis))
 
-def manhattan_distance(x1, x2):
+def manhattan_distance(x1, x2, axis=1):
   '''
   Compute the Manhattan distance between two points.
 
@@ -24,7 +24,7 @@ def manhattan_distance(x1, x2):
   Returns:
     - distance: Manhattan distance between the two points (float)
   '''
-  return np.sum(np.abs(x1 - x2))
+  return np.sum(np.abs(x1 - x2), axis=axis)
 
 def minkowski_distance(x1, x2, axis=1, p=2):
   '''
