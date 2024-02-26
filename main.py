@@ -1,28 +1,30 @@
-from algorithms.neighbors.KNeighborsClassifier import KNeighborsClassifier
+from algorithms.linear_model.LinearRegression import LinearRegression
+from sklearn.linear_model import LinearRegression as SklearnLinearRegression
 import numpy as np
-from sklearn.neighbors import KNeighborsClassifier as KNN
 
-# Create a KNeighborsRegressor model
-knn_regressor = KNeighborsClassifier(n_neighbors=3, weights='distance', p=3, metric='minkowski')
-knn2 = KNN(n_neighbors=3, weights='distance', p=3, metric='manhattan')
+# Create the data
+X = np.array([[0, 3, 5], [1, 2, 6], [8, 5, 4], [2, 6, 48], [43, 45, 75]])
+print(X)
+y = 4 * np.sum(X, axis=1, keepdims=True) + 3 # + np.random.randn(5).reshape(-1, 1)
+print(y)
 
-# Create a random dataset
-np.random.seed(0)
-X = np.array([[3, 4, 5], [6, 7, 8], [0, 1, 2]])
-y = np.array([1, 1, 2])
-print(X.shape)
+# Create an instance of the LinearRegression class
+my = LinearRegression()
+sklearn = SklearnLinearRegression()
 
-# Fit the model to the dataset
-knn_regressor.fit(X, y)
-knn2.fit(X, y)
+# Fit the models
+my.fit(X, y)
+sklearn.fit(X, y)
 
-# Predict the target values for the input features
-X_test = np.array([[1, 2, 3], [4, 5, 6]])
-y_test = np.array([1, 2])
-y_pred = knn_regressor.predict(X_test)
-y_pred2 = knn2.predict(X_test)
-print(y_pred)
-print(y_pred2)
+# Predict the target values
+my_predictions = my.predict(X)
+sklearn_predictions = sklearn.predict(X)
 
-# print(knn_regressor.score(X_test, y_test))
-# print(knn2.score(X_test, y_test))
+# Compare the predictions
+print('My predictions:', my_predictions)
+
+print('Sklearn predictions:', sklearn_predictions)
+
+# Compare the weights and bias
+print('My weights:', my.weights, 'My bias:', my.bias)
+print('Sklearn weights:', sklearn.coef_, 'Sklearn bias:', sklearn.intercept_)
