@@ -39,3 +39,25 @@ def categorical_cross_entropy(y_true, y_pred):
     - loss: Categorical cross-entropy loss (float)
   '''
   return -np.sum(y_true * np.log(y_pred)) / len(y_true)
+
+
+def gini_index(y):
+  '''
+  Compute the Gini index.
+  Params:
+    - y: target values
+  Returns:
+    - gini index
+  '''
+  return 1 - np.sum((np.bincount(y) / len(y))**2)
+
+def entropy(y):
+  '''
+  Compute the entropy.
+  Params:
+    - y: target values
+  Returns:
+    - entropy
+  '''
+  p = np.bincount(y) / len(y)
+  return -np.sum(p * np.log2(p))
