@@ -26,4 +26,7 @@ class AdaBoostClassifier(BaseEstimator):
     pass 
 
   def evaluate(self, X, y, metric):
-    pass 
+    pass
+
+  def clone(self):
+    return AdaBoostClassifier(estimator=self.base_estimator, n_estimators=self.n_estimators, learning_rate=self.learning_rate)
