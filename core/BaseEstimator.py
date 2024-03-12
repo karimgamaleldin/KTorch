@@ -48,3 +48,12 @@ class BaseEstimator:
     predictions = self.predict(X)
     return metric(y_true=y, y_pred=predictions)
   
+  def clone(self):
+    '''
+    Create a copy of the estimator.
+
+    Returns:
+      - estimator: A new instance of the estimator
+    '''
+    raise NotImplementedError('Clone method must be implemented in the subclass')
+  

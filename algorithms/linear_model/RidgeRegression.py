@@ -63,4 +63,12 @@ class RidgeRegression(BaseEstimator):
     y_pred = self.predict(X)
     return r_squared(y, y_pred)
   
+  def clone(self):
+    '''
+    Create a copy of the estimator.
+    Returns:
+      - estimator: A new instance of the estimator
+    '''
+    return RidgeRegression(alpha=self.alpha, fit_intercept=self.fit_intercept)
+  
   

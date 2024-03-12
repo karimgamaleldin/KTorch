@@ -90,4 +90,12 @@ class KNeighborsRegressor(BaseEstimator):
     ''' 
     y_pred = self.predict(X)
     return r_squared(y, y_pred) # compute the R^2 score of the prediction
+  
+  def clone(self):
+      '''
+      Create a copy of the estimator.
+      returns:
+      - estimator: A new instance of the estimator
+      '''
+      return KNeighborsRegressor(n_neighbors=self.n_neighbors, weights=self.weights, p=self.p, metric=self.metric)
 

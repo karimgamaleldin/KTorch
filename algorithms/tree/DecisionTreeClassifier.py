@@ -69,6 +69,9 @@ class DecisionTreeClassifier(BaseEstimator):
 
     def _random_splitter(self, X, y, features):
       pass 
+
+    def clone(self):
+      return DecisionTreeClassifier(self.criterion, self.splitter, self.max_depth, self.min_samples_split, self.max_features, self.min_impurity_decrease, self.ccp_alpha)
     
 
 class Node:

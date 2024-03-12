@@ -92,3 +92,12 @@ class KNeighborsClassifier(BaseEstimator):
     '''
     y_pred = self.predict(X)
     return accuracy_score(y, y_pred) 
+  
+  def clone(self):
+    '''
+    Create a copy of the estimator.
+
+    Returns:
+      - estimator: A new instance of the estimator
+    '''
+    return KNeighborsClassifier(n_neighbors=self.n_neighbors, weights=self.weights, p=self.p, metric=self.metric)
