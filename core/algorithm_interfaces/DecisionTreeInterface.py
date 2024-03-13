@@ -18,13 +18,13 @@ class DecisionTreeInterface(BaseEstimator):
     self.ccp_alpha = ccp_alpha
     self.type = type
 
-  def fit(self, X, y):
+  def fit(self, X, y, sample_weight=None):
     if self.max_features is None:
       self.max_features = X.shape[1]
     else:
       assert 0 < self.max_features <= X.shape[1], 'max_features should be in the range (0, n_features]'
     # build the tree
-    self.root = self._build(X, y)
+    self.root = self._build(X, y, sample_weight=sample_weight)
 
   def predict(self, X):
     return np.array([self._get_value(x, self.root) for x in X])
@@ -33,7 +33,7 @@ class DecisionTreeInterface(BaseEstimator):
     predictions = self.predict(X)
     return metric(y_true=y, y_pred=predictions)
 
-  def _build(self, X, y, depth=0):
+  def _build(self, X, y, depth=0, sample_weight=None):
     # Check if we reached the max depth, if all the labels are the same or if the number of samples is less than the minimum samples to split
     if depth == self.max_depth or len(np.unique(y)) == 1 or len(y) < self.min_samples_split:
       return _Node(value = np.mean(y)) if self.type == 'regression' else _Node(value = np.bincount(y).argmax()) # Return the mean of the labels or the most common label, for middle condition mean and most common label are the same as any label as there is only one label
@@ -41,7 +41,7 @@ class DecisionTreeInterface(BaseEstimator):
     # Get the index of the random features we will choose from
     features = np.random.choice(X.shape[1], self.max_features, replace=False)
 
-    feature, threshold, impurity = self._split(X, y, features) # Get the best split depending on those features
+    feature, threshold, impurity = self._split(X, y, features, sample_weight=sample_weight) # Get the best split depending on those features
 
     # If the best impurity is 0 or less than the minimum impurity decrease, return the mean of the labels or the most common label (no more splits)
     if impurity == 0 or impurity < self.min_impurity_decrease:
@@ -70,16 +70,16 @@ class DecisionTreeInterface(BaseEstimator):
     
 
 
-  def _split(self, X, y, features):
+  def _split(self, X, y, features, sample_weight=None):
     '''
     Choose which type of split we will use (best or random)
     '''
     if self.splitter == 'best':
-      return self._best_splitter(X, y, features)
+      return self._best_splitter(X, y, features, sample_weight=sample_weight)
     
     return self._random_splitter(X, y, features)
 
-  def _best_splitter(self, X, y, features):
+  def _best_splitter(self, X, y, features, sample_weight=None):
     best, best_idx, best_threshold = -1, None, None
 
     for feature in features:
@@ -91,8 +91,8 @@ class DecisionTreeInterface(BaseEstimator):
         data_left_mask = X[:, feature] <= threshold
         data_right_mask = ~data_left_mask
         # Get the impurity of the left and right data, the if statement is for classification and the else is for regression as for regression we need to get the impurity of the left and right data with the mean of the labels
-        left_impurity = self.criterion(y[data_left_mask]) if self.type == 'classification' else self.criterion(y[data_left_mask], np.mean(y[data_left_mask]))
-        right_impurity = self.criterion(y[data_right_mask]) if self.type == 'classification' else self.criterion(y[data_right_mask], np.mean(y[data_right_mask]))
+        left_impurity = self.criterion(y[data_left_mask], sample_weight=sample_weight) if self.type == 'classification' else self.criterion(y[data_left_mask], np.mean(y[data_left_mask]))
+        right_impurity = self.criterion(y[data_right_mask], sample_weight=sample_weight) if self.type == 'classification' else self.criterion(y[data_right_mask], np.mean(y[data_right_mask]))
 
         # Get the impurity weighted average of the split, the function with the min impurity will be the best split (max information gain)
         n = len(y)

@@ -41,23 +41,32 @@ def categorical_cross_entropy(y_true, y_pred):
   return -np.sum(y_true * np.log(y_pred)) / len(y_true)
 
 
-def gini_index(y):
+def gini_index(y, sample_weight=None):
   '''
   Compute the Gini index.
   Params:
     - y: target values
+    - sample_weight: sample weights for weighted Gini index
   Returns:
     - gini index
   '''
-  return 1 - np.sum((np.bincount(y) / len(y))**2)
+  return 1 - np.sum((np.bincount(y) / len(y))**2) if sample_weight is None else 1 - np.sum((np.bincount(y, weights=sample_weight) / np.sum(sample_weight))**2)
 
-def entropy(y):
-  '''
-  Compute the entropy.
-  Params:
-    - y: target values
-  Returns:
-    - entropy
-  '''
-  p = np.bincount(y) / len(y)
-  return -np.sum(p * np.log2(p))
+def entropy(y, sample_weight=None):
+    '''
+    Compute the entropy.
+    Params:
+        - y: target values
+        - sample_weight: sample weights for weighted Entropy
+    Returns:
+        - entropy
+    '''
+    if sample_weight is None:
+        p = np.bincount(y) / len(y)
+    else:
+        p = np.bincount(y, weights=sample_weight) / np.sum(sample_weight)
+    
+    # Avoiding log(0) by filtering out zero probabilities
+    p = p[p > 0]
+    
+    return -np.sum(p * np.log2(p))

@@ -23,8 +23,8 @@ class DecisionTreeClassifier(DecisionTreeInterface):
       super().__init__(self.criterion, self.splitter, self.max_depth, self.min_samples_split, self.max_features, self.min_impurity_decrease, self.ccp_alpha, 'classification')
   
     
-    def fit(self, X, y):
-      super().fit(X, y)
+    def fit(self, X, y, sample_weight=None):
+      super().fit(X, y, sample_weight=sample_weight)
   
     def predict(self, X):
       super().predict(X) 
