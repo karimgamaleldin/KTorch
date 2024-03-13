@@ -11,7 +11,7 @@ def mean_squared_error(y_true, y_pred):
   Returns:
     - score: MSE score
   '''
-  return round(np.mean(np.square(y_true - y_pred)), 2)
+  return np.mean(np.square(y_true - y_pred))
 
 def mean_absolute_error(y_true, y_pred):
   '''
@@ -25,7 +25,7 @@ def mean_absolute_error(y_true, y_pred):
     - score: MAE score
   '''
 
-  return round(np.mean(np.abs(y_true - y_pred)), 2)
+  return np.mean(np.abs(y_true - y_pred))
 
 def huber(y_true, y_pred, delta=1.0):
   '''
@@ -94,7 +94,7 @@ def r_squared(y_true, y_pred):
   y_true_mean = np.mean(y_true)
   ss_total = np.sum((y_true - y_true_mean) ** 2)
   ss_residual = np.sum((y_true - y_pred) ** 2)
-  return round(1 - (ss_residual / ss_total), 2)
+  return 1 - (ss_residual / ss_total)
 
 def friedman_mse(y_true, y_pred):
   '''
@@ -107,7 +107,7 @@ def friedman_mse(y_true, y_pred):
   Returns:
     - score: FMSE score
   '''
-  return round(np.mean((y_true - y_pred) ** 2), 2)
+  return np.mean((y_true - y_pred) ** 2)
 
 def mean_poisson_deviance(y_true, y_pred):
   '''
@@ -120,4 +120,4 @@ def mean_poisson_deviance(y_true, y_pred):
   Returns:
     - loss: Poisson deviance loss
   '''
-  return round(2 * np.mean(y_pred - y_true + y_true * np.log(y_true / y_pred)), 2)
+  return 2 * np.mean(y_pred - y_true + y_true * np.log(y_true / y_pred))

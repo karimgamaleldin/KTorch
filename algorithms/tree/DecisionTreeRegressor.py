@@ -10,7 +10,7 @@ class DecisionTreeRegressor(DecisionTreeInterface):
 
   def __init__(self, criterion='squared_error', splitter='best', max_depth = None, min_samples_split: int =2, max_features=None, min_impurity_decrease=0, ccp_alpha=0.0):
       self.root = None
-      assert criterion in ['squared_error', 'friedman_mse', 'absolute_error', 'poisson'], 'criterion should be gini or entropy or log_loss'
+      assert criterion in ['squared_error', 'friedman_mse', 'absolute_error', 'poisson'], 'criterion should be squared_error, friedman_mse, absolute_error or poisson'
       if criterion == 'squared_error':
         self.criterion = mean_squared_error
       elif criterion == 'friedman_mse':
