@@ -16,6 +16,7 @@ class Linear(nn.Module):
       out_features: int: the number of output features
       bias: bool: whether to include a bias term in the linear layer
     '''
+    super().__init__()
     self.in_features = in_features
     self.out_features = out_features
     self.shape = (out_features, in_features)

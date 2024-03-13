@@ -4,6 +4,13 @@ class Module:
   '''
   A class that represents a module in a neural network
   '''
+
+  def __init__(self):
+    '''
+    Initialize the module
+    '''
+    self.training = True
+  
   def __call__(self, x: Tensor) -> Tensor:
     '''
     Perform the forward pass of the module

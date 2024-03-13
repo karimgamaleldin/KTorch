@@ -121,3 +121,20 @@ def mean_poisson_deviance(y_true, y_pred):
     - loss: Poisson deviance loss
   '''
   return 2 * np.mean(y_pred - y_true + y_true * np.log(y_true / y_pred))
+
+
+def quantile_loss(y_true, y_pred, q=0.5):
+  '''
+  Quantile loss
+
+  Parameters:
+    - y_true: Ground truth target values
+    - y_pred: Predicted target values
+    - q: Quantile level
+
+  Returns:
+    - loss: Quantile loss
+  '''
+  e = y_true - y_pred
+  return np.mean(np.maximum(q * e, (q - 1) * e))
+

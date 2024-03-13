@@ -225,3 +225,40 @@ class Tensor:
 
     out._backward = _backward
     return out
+  
+  def sqrt(self):
+    '''
+    Compute the square root of the tensor
+    '''
+    t = np.sqrt(self.data)
+    out = Tensor(t, _prev=(self,), _op='sqrt', label=f"sqrt({self.label})")
+    def _backward():
+      self.grad += 0.5 * self.data ** -0.5 * out.grad
+
+    out._backward = _backward
+    return out
+  
+
+  def mean(self, axis=None, keepdim=False):
+    '''
+    Compute the mean of the tensor
+    '''
+    t = np.mean(self.data, axis=axis, keepdims=keepdim)
+    out = Tensor(t, _prev=(self,), _op='mean', label=f"mean({self.label})")
+    def _backward():
+      self.grad += np.ones_like(self.data) * out.grad / self.data.size
+
+    out._backward = _backward
+    return out
+
+  def var(self, axis=None, keepdim=False):
+    '''
+    Compute the variance of the tensor
+    '''
+    t = np.var(self.data, axis=axis, keepdims=keepdim)
+    out = Tensor(t, _prev=(self,), _op='var', label=f"var({self.label})")
+    def _backward():
+      self.grad += 2 * (self.data - self.mean(axis=axis, keepdim=keepdim).data) * out.grad / self.data.size
+
+    out._backward = _backward
+    return out

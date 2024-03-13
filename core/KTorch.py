@@ -48,3 +48,21 @@ def matmul(x: Tensor, y: Tensor) -> Tensor:
   Perform the matrix multiplication of two tensors
   '''
   return x.matmul(y)
+
+def sqrt(x: Tensor) -> Tensor:
+  '''
+  Perform the square root of a tensor
+  '''
+  return x.sqrt()
+
+def mean(x: Tensor, axis=None, keepdim=False) -> Tensor:
+  '''
+  Compute the mean of a tensor
+  '''
+  return x.mean(axis=axis, keepdim=keepdim)
+
+def var(x: Tensor, axis=None, keepdim=False) -> Tensor:
+  '''
+  Compute the variance of a tensor
+  '''
+  return x.var(axis=axis, keepdim=keepdim)
