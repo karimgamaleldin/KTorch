@@ -1,6 +1,6 @@
 from core.BaseEstimator import BaseEstimator
 import numpy as np
-from algorithms.tree.DecisionTreeRegressor import DecisionTreeRegressor
+from klearn.tree.DecisionTreeRegressor import DecisionTreeRegressor
 from metrics.RegressionMetrics import mean_squared_error, friedman_mse, mean_absolute_error, huber, quantile_loss
 
 class GradientBoostingRegressor(BaseEstimator):
