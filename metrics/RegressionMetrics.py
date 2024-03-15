@@ -96,18 +96,6 @@ def r_squared(y_true, y_pred):
   ss_residual = np.sum((y_true - y_pred) ** 2)
   return 1 - (ss_residual / ss_total)
 
-def friedman_mse(y_true, y_pred):
-  '''
-  Friedman Mean Squared Error (FMSE)
-
-  Parameters:
-    - y_true: Ground truth target values
-    - y_pred: Predicted target values
-
-  Returns:
-    - score: FMSE score
-  '''
-  return np.mean((y_true - y_pred) ** 2)
 
 def mean_poisson_deviance(y_true, y_pred):
   '''
