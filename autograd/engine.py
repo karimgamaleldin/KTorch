@@ -14,6 +14,7 @@ class Tensor:
       op: string: the operation that was used to compute the current tensor
     '''
     self.data = np.array(data, dtype=np.float32)
+    self.shape = self.data.shape
     self.grad = np.zeros_like(data, dtype=np.float32)
     self._prev = _prev
     self._op = _op
@@ -24,20 +25,30 @@ class Tensor:
     '''
     Add the data of the tensor with another tensor
     '''
-    if isinstance(other, Tensor):
+    print(type(other))
+    if isinstance(other, (Tensor, np.ndarray)):
       if self.data.shape != other.data.shape:
-        raise ValueError("The shapes of the tensors must be the same")
+        # raise ValueError("The shapes of the tensors must be the same")
+        pass
+      other = Tensor(other) if isinstance(other, np.ndarray) else other
       out = Tensor(self.data + other.data, _prev=(self, other), _op='add', label=f"{self.label} + {other.label}")
     elif isinstance(other, (int, float)):
       out = Tensor(self.data + other, _prev=(self,), _op='add', label=f"{self.label} + {other}")
     else:
-      raise TypeError("The tensor must be a tensor or a number")
+      raise TypeError("The input must be a tensor or a number")
     
     def _backward():
-      self.grad += out.grad
-      if isinstance(other, Tensor):
+      if(self.data.shape == other.data.shape):
+        self.grad += other.grad
         other.grad += self.grad
-
+      # Broadcasting
+      else:
+        if (self.shape[0] == other.shape[0]):
+          self.grad += np.sum(other.grad, axis=0)
+          other.grad += np.sum(self.grad, axis=0)
+        elif (self.shape[1] == other.shape[1]):
+          self.grad += np.sum(other.grad, axis=1)
+          other.grad += np.sum(self.grad, axis=1)
     out._backward = _backward
     return out
   
@@ -65,7 +76,8 @@ class Tensor:
     '''
     if isinstance(other, Tensor):
       if self.data.shape != other.data.shape:
-        raise ValueError("The shapes of the tensors must be the same")
+        # raise ValueError("The shapes of the tensors must be the same")
+        pass
       out = Tensor(self.data * other.data, _prev=(self, other), _op='mul', label=f"{self.label} * {other.label}")
     elif isinstance(other, (int, float)):
       out = Tensor(self.data * other, _prev=(self,), _op='mul', label=f"{self.label} * {other}")
@@ -73,9 +85,20 @@ class Tensor:
       raise TypeError("The tensor must be a tensor or a number")
     
     def _backward():
-      self.grad += other.data * out.grad if isinstance(other, Tensor) else other * out.grad
       if isinstance(other, Tensor):
-        other.grad += self.data * out.grad
+        if(self.data.shape == other.data.shape):
+          self.grad += other.data * out.grad
+          other.grad += self.data * out.grad
+        # Broadcasting
+        else:
+          if (self.shape[0] == other.shape[0] and len(self.shape) == len(other.shape)):
+            self.grad += np.sum(other.data * out.grad, axis=0)
+            other.grad += np.sum(self.data * out.grad, axis=0)
+          elif (self.shape[-1] == other.shape[-1]):
+            self.grad += np.sum(other.data * out.grad, axis=1)
+            other.grad += np.sum(self.data * out.grad, axis=1)
+      else:
+        self.grad += other * out.grad
 
     out._backward = _backward
     return out
@@ -164,6 +187,30 @@ class Tensor:
     out._backward = _backward
     return out
   
+  def log(self):
+    '''
+    Apply the logarithm function to the tensor
+    '''
+    t = np.log(self.data)
+    out = Tensor(t, _prev=(self,), _op='log', label=f"log({self.label})")
+    def _backward():
+      self.grad += 1 / self.data * out.grad
+
+    out._backward = _backward
+    return out
+  
+  def sum(self, axis=None, keepdims=False):
+    '''
+    Compute the sum of the tensor
+    '''
+    t = np.sum(self.data, axis=axis, keepdims=keepdims)
+    out = Tensor(t, _prev=(self,), _op='sum', label=f"sum({self.label})")
+    def _backward():
+      self.grad += np.ones_like(self.data) * out.grad
+
+    out._backward = _backward
+    return out
+  
   def backward(self):
     '''
     Compute the gradient for all the previous tensors using topological sort
@@ -182,7 +229,7 @@ class Tensor:
     for node in reversed(topo):
       node._backward()
   
-  def matmul(self, other):
+  def __matmul__(self, other):
     '''
     Compute the matrix multiplication of 2 tensors
     '''
@@ -212,6 +259,9 @@ class Tensor:
     '''
     self.grad = np.zeros_like(self.data)
 
+  def zero_grad(self):
+    self._zero_grad()
+
   def flatten(self, start_dim=None, end_dim=-1):
     '''
     Flatten the tensor
@@ -239,11 +289,11 @@ class Tensor:
     return out
   
 
-  def mean(self, axis=None, keepdim=False):
+  def mean(self, axis=None, keepdims=False):
     '''
     Compute the mean of the tensor
     '''
-    t = np.mean(self.data, axis=axis, keepdims=keepdim)
+    t = np.mean(self.data, axis=axis, keepdims=keepdims)
     out = Tensor(t, _prev=(self,), _op='mean', label=f"mean({self.label})")
     def _backward():
       self.grad += np.ones_like(self.data) * out.grad / self.data.size
@@ -251,14 +301,64 @@ class Tensor:
     out._backward = _backward
     return out
 
-  def var(self, axis=None, keepdim=False):
+  def var(self, axis=None, keepdims=False):
     '''
     Compute the variance of the tensor
     '''
-    t = np.var(self.data, axis=axis, keepdims=keepdim)
+    t = np.var(self.data, axis=axis, keepdims=keepdims)
     out = Tensor(t, _prev=(self,), _op='var', label=f"var({self.label})")
     def _backward():
-      self.grad += 2 * (self.data - self.mean(axis=axis, keepdim=keepdim).data) * out.grad / self.data.size
+      self.grad += 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) * out.grad / self.data.size
 
     out._backward = _backward
     return out
+  
+  def __getitem__(self, idx):
+    '''
+    Get the item at the specified index
+    '''
+    t = self.data[idx]
+    out = Tensor(t, _prev=(self,), _op='getitem', label=f"{self.label}[{idx}]")
+    def _backward():
+      self.grad[idx] += out.grad
+
+    out._backward = _backward
+    return out
+  
+  def view(self, *shape):
+    '''
+    Reshape the tensor
+    '''
+    t = self.data.reshape(*shape)
+    out = Tensor(t, _prev=(self,), _op='view', label=f"view({self.label})")
+    def _backward():
+      self.grad += out.grad.reshape(self.data.shape)
+
+    out._backward = _backward
+    return out
+  
+  
+  def max(self, axis=None, keepdims=False):
+    '''
+    Compute the maximum of the tensor
+    '''
+    t = np.max(self.data, axis=axis, keepdims=keepdims)
+    out = Tensor(t, _prev=(self,), _op='max', label=f"max({self.label})")
+    def _backward():
+      self.grad += (self.data == out.data) * out.grad
+
+    out._backward = _backward
+    return out
+  
+  def min(self, axis=None, keepdims=False):
+    '''
+    Compute the minimum of the tensor
+    '''
+    t = np.min(self.data, axis=axis, keepdims=keepdims)
+    out = Tensor(t, _prev=(self,), _op='min', label=f"min({self.label})")
+    def _backward():
+      self.grad += (self.data == out.data) * out.grad
+
+    out._backward = _backward
+    return out
+    

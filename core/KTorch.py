@@ -66,3 +66,9 @@ def var(x: Tensor, axis=None, keepdim=False) -> Tensor:
   Compute the variance of a tensor
   '''
   return x.var(axis=axis, keepdim=keepdim)
+
+def rand(shape) -> Tensor:
+  '''
+  Create a tensor of random numbers
+  '''
+  return Tensor(np.random.rand(*shape))
