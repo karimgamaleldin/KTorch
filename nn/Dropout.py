@@ -1,8 +1,9 @@
 import nn
 from core import KTorch
 from autograd.engine import Tensor
+from nn.Module import Module
 
-class Dropout(nn.Module):
+class Dropout(Module):
   '''
   A class that represents a dropout layer in a neural network.
 

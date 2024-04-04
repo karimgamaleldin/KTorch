@@ -72,3 +72,28 @@ def rand(shape) -> Tensor:
   Create a tensor of random numbers
   '''
   return Tensor(np.random.rand(*shape))
+
+def arange(start, stop=None, step=1, dtype=np.float32) -> Tensor:
+  '''
+  Create a tensor of evenly spaced values
+  '''
+  return Tensor(np.arange(start, stop, step))
+
+def pow(x: Tensor, y: Tensor) -> Tensor:
+  '''
+  Compute the power of a tensor
+  '''
+  return x.__pow__(y)
+
+def cos(x: Tensor) -> Tensor:
+  '''
+  Compute the cosine of a tensor
+  '''
+  return x.cos()
+
+def sin(x: Tensor) -> Tensor:
+  '''
+  Compute the sine of a tensor
+  '''
+  return x.sin()
+

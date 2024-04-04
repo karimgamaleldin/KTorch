@@ -5,7 +5,7 @@ class Tensor:
   Stores a numpy array and its gradient
   '''
 
-  def __init__(self, data, _prev=(), _op='', label=''):
+  def __init__(self, data, _prev=(), _op='', label='', requires_grad=True):
     '''
     Initialize the tensor with the data
     params:
@@ -20,12 +20,12 @@ class Tensor:
     self._op = _op
     self.label = label
     self._backward = lambda: None
+    self.requires_grad = requires_grad
 
   def __add__(self, other):
     '''
     Add the data of the tensor with another tensor
     '''
-    print(type(other))
     if isinstance(other, (Tensor, np.ndarray)):
       if self.data.shape != other.data.shape:
         # raise ValueError("The shapes of the tensors must be the same")
@@ -361,4 +361,51 @@ class Tensor:
 
     out._backward = _backward
     return out
-    
+  
+  def cos(self):
+    '''
+    Compute the cosine of the tensor
+    '''
+    t = np.cos(self.data)
+    out = Tensor(t, _prev=(self,), _op='cos', label=f"cos({self.label})")
+    def _backward():
+      self.grad += -np.sin(self.data) * out.grad
+
+    out._backward = _backward
+    return out
+  
+  def sin(self):
+    '''
+    Compute the sine of the tensor
+    '''
+    t = np.sin(self.data)
+    out = Tensor(t, _prev=(self,), _op='sin', label=f"sin({self.label})")
+    def _backward():
+      self.grad += np.cos(self.data) * out.grad
+
+    out._backward = _backward
+    return out
+  
+  def __gt__(self, other):
+    '''
+    Compare the data of the tensor with another tensor
+    '''
+    if isinstance(other, Tensor):
+      t = self.data > other.data
+      out = Tensor(t, _prev=(self, other), _op='gt', label=f"{self.label} > {other.label}")
+    elif isinstance(other, (int, float)):
+      t = self.data > other
+      out = Tensor(t, _prev=(self,), _op='gt', label=f"{self.label} > {other}")
+    else:
+      raise TypeError("The input must be a tensor or a number")
+    def _backward():
+      pass
+
+    out._backward = _backward
+    return out
+  
+  def numpy(self):
+    '''
+    Convert the tensor to a numpy array
+    '''
+    return self.data

@@ -18,13 +18,12 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
 
 ## Code Examples
 
-## Installation
-
-## How to use
-
-## Contributing
-
 ## Credits
+
+This is a list of some of the sources that helped me in learning and making this project
+
+1. [StatQuest with Josh Starmer](https://www.youtube.com/@statquest)
+2. [Serrano.Academy](https://www.youtube.com/@SerranoAcademy)
 
 ## License
 
