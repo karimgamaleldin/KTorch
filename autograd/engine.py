@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.special import erf
 
 class Tensor:
   '''
@@ -409,3 +410,30 @@ class Tensor:
     Convert the tensor to a numpy array
     '''
     return self.data
+  
+
+  def phi(self):
+    '''
+    Compute the cumulative distribution function of the tensor
+    '''
+    t = 0.5 * (1 + erf(self.data / np.sqrt(2)))
+    out = Tensor(t, _prev=(self,), _op='phi', label=f"phi({self.label})")
+    def _backward():
+      self.grad += (1 / np.sqrt(2 * np.pi)) * np.exp(-0.5 * self.data ** 2) * out.grad
+
+    out._backward = _backward
+    return out
+  
+  def split(self, split_size, dim=-1):
+    '''
+    Split the tensor
+    '''
+    t = np.split(self.data, split_size, axis=dim)
+    out = [Tensor(x, _prev=(self,), _op='split', label=f"split({self.label})") for x in t]
+    def _backward():
+      for x in out:
+        self.grad += x.grad
+
+    out._backward = _backward
+    return out
+  

@@ -97,3 +97,9 @@ def sin(x: Tensor) -> Tensor:
   '''
   return x.sin()
 
+def phi(x: Tensor) -> Tensor:
+  '''
+  Compute the normal distribution CDF of a tensor
+  '''
+  return x.phi()
+
