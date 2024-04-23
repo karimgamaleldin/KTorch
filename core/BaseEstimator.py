@@ -5,9 +5,21 @@ class BaseEstimator:
   Base class for all algorithms for example: linear regression, logistic regression, decision tree, random forest, etc.
   '''
   def __init__(self, algorithm_name, algorithm_type, base_metric):
-    self.algorithm_name = algorithm_name
-    self.algorithm_type = algorithm_type
-    self.base_metric = base_metric
+    self._algorithm_name = algorithm_name
+    self._algorithm_type = algorithm_type
+    self._base_metric = base_metric
+
+  @property
+  def algorithm_name(self):
+    return self._algorithm_name
+  
+  @property
+  def algorithm_type(self):
+    return self._algorithm_type
+  
+  @property
+  def base_metric(self):
+    return self._base_metric
   
   def fit(self, X, y):
     '''
