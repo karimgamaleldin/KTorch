@@ -437,3 +437,65 @@ class Tensor:
     out._backward = _backward
     return out
   
+  def masked_fill(self, mask, value):
+    '''
+    Fill the tensor using a mask
+    '''
+    t = np.copy(self.data)
+    t[mask] = value
+    out = Tensor(t, _prev=(self,), _op='masked_fill', label=f"masked_fill({self.label})")
+    def _backward():
+      self.grad += out.grad
+
+    out._backward = _backward
+    return out
+  
+  def softmax(self, x, axis):
+    '''
+    Compute the softmax of the tensor
+    '''
+    t = np.exp(x.data - np.max(x.data, axis=axis, keepdims=True)) # Numerically stable
+    t = t / np.sum(t, axis=axis, keepdims=True)
+    out = Tensor(t, _prev=(x,), _op='softmax', label=f"softmax({x.label})")
+    def _backward():
+      self.grad += out.grad
+
+    out._backward = _backward
+    return out
+  
+
+  def unsqueeze(self, dim):
+    '''
+    Unsqueeze the tensor
+    '''
+    t = np.expand_dims(self.data, axis=dim)
+    out = Tensor(t, _prev=(self,), _op='unsqueeze', label=f"unsqueeze({self.label})")
+    def _backward():
+      self.grad += np.sum(out.grad, axis=dim)
+
+    out._backward = _backward
+    return out
+  
+  def squeeze(self, dim):
+    '''
+    Squeeze the tensor
+    '''
+    t = np.squeeze(self.data, axis=dim)
+    out = Tensor(t, _prev=(self,), _op='squeeze', label=f"squeeze({self.label})")
+    def _backward():
+      self.grad += np.expand_dims(out.grad, axis=dim)
+
+    out._backward = _backward
+    return out
+  
+  def transpose(self, dim0, dim1):
+    '''
+    Transpose the tensor
+    '''
+    t = np.transpose(self.data, (dim0, dim1))
+    out = Tensor(t, _prev=(self,), _op='transpose', label=f"transpose({self.label})")
+    def _backward():
+      self.grad += np.transpose(out.grad, (dim1, dim0))
+
+    out._backward = _backward
+    return out

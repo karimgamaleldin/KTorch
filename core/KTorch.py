@@ -47,7 +47,7 @@ def matmul(x: Tensor, y: Tensor) -> Tensor:
   '''
   Perform the matrix multiplication of two tensors
   '''
-  return x.matmul(y)
+  return x.__matmul__(y)
 
 def sqrt(x: Tensor) -> Tensor:
   '''
@@ -102,4 +102,10 @@ def phi(x: Tensor) -> Tensor:
   Compute the normal distribution CDF of a tensor
   '''
   return x.phi()
+
+def softmax(x: Tensor, axis=None) -> Tensor:
+  '''
+  Compute the softmax of a tensor
+  '''
+  return x.softmax(axis=axis)
 
