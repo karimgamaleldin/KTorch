@@ -23,15 +23,36 @@ class Tensor:
     self._backward = lambda: None
     self.requires_grad = requires_grad
 
+
+  def check_broadcastable(self, other: 'Tensor'):
+    '''
+    Checks if the tensors are broadcastable according to numpy rules
+    '''
+    if self.data.shape == other.data.shape:
+      return True
+    
+    self_shape = np.array(self.data.shape)
+    other_shape = np.array(other.data.shape)
+
+    # Pad the shapes with ones
+    max_dim = max(len(self_shape), len(other_shape))
+    self_shape = np.pad(self_shape, (max_dim - len(self_shape), 0), 'constant', constant_values=1)
+    other_shape = np.pad(other_shape, (max_dim - len(other_shape), 0), 'constant', constant_values=1)
+
+    # Check if the shapes are broadcastable
+    compatible = (self_shape == other_shape) | (self_shape == 1) | (other_shape == 1)
+
+    return compatible.all()
+
+
   def __add__(self, other):
     '''
     Add the data of the tensor with another tensor
     '''
     if isinstance(other, (Tensor, np.ndarray)):
-      if self.data.shape != other.data.shape:
-        # raise ValueError("The shapes of the tensors must be the same")
-        pass
       other = Tensor(other) if isinstance(other, np.ndarray) else other
+      if not self.check_broadcastable(other):
+        raise ValueError("The shapes of the tensors are not broadcastable")
       out = Tensor(self.data + other.data, _prev=(self, other), _op='add', label=f"{self.label} + {other.label}")
     elif isinstance(other, (int, float)):
       out = Tensor(self.data + other, _prev=(self,), _op='add', label=f"{self.label} + {other}")
@@ -40,16 +61,29 @@ class Tensor:
     
     def _backward():
       if(self.data.shape == other.data.shape):
-        self.grad += other.grad
-        other.grad += self.grad
-      # Broadcasting
+        self.grad += out.grad
+        other.grad += out.grad
       else:
-        if (self.shape[0] == other.shape[0]):
-          self.grad += np.sum(other.grad, axis=0)
-          other.grad += np.sum(self.grad, axis=0)
-        elif (self.shape[1] == other.shape[1]):
-          self.grad += np.sum(other.grad, axis=1)
-          other.grad += np.sum(self.grad, axis=1)
+        # Check for self and out
+        # Pad the shapes with ones
+        max_dim = max(len(self.data.shape), len(out.data.shape))
+        self_shape = np.pad(self.data.shape, (max_dim - len(self.data.shape), 0), 'constant', constant_values=1)
+        out_shape = np.pad(out.data.shape, (max_dim - len(out.data.shape), 0), 'constant', constant_values=1)
+
+        # Get the axes where the shapes will be broadcasted
+        self_axes = [axis for axis, (s, os) in enumerate(zip(self_shape, out_shape)) if s == 1 and os != 1]
+        self.grad += np.sum(out.grad, axis=tuple(self_axes), keepdims=True)
+
+        # Check for other and out
+        # Pad the shapes with ones
+        max_dim = max(len(other.data.shape), len(out.data.shape))
+        other_shape = np.pad(other.data.shape, (max_dim - len(other.data.shape), 0), 'constant', constant_values=1)
+        out_shape = np.pad(out.data.shape, (max_dim - len(out.data.shape), 0), 'constant', constant_values=1)
+
+        # Get the axes where the shapes will be broadcasted
+        other_axes = [axis for axis, (s, os) in enumerate(zip(other_shape, out_shape)) if s == 1 and os != 1]
+        other.grad += np.sum(out.grad, axis=tuple(other_axes), keepdims=True)
+
     out._backward = _backward
     return out
   
@@ -71,14 +105,15 @@ class Tensor:
     '''
     return (-1 * self).__add__(other)
   
+  
   def __mul__(self, other):
     '''
     Multiply the data of the tensor with another tensor
     '''
     if isinstance(other, Tensor):
-      if self.data.shape != other.data.shape:
-        # raise ValueError("The shapes of the tensors must be the same")
-        pass
+      other = Tensor(other) if isinstance(other, np.ndarray) else other
+      if not self.check_broadcastable(other):
+        raise ValueError("The shapes of the tensors are not broadcastable")
       out = Tensor(self.data * other.data, _prev=(self, other), _op='mul', label=f"{self.label} * {other.label}")
     elif isinstance(other, (int, float)):
       out = Tensor(self.data * other, _prev=(self,), _op='mul', label=f"{self.label} * {other}")
