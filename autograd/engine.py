@@ -14,9 +14,9 @@ class Tensor:
       _prev: tuple: the previous tensors that were used to compute the current tensor
       op: string: the operation that was used to compute the current tensor
     '''
-    self.data = np.array(data, dtype=np.float32)
+    self.data = np.array(data, dtype=np.float64)
     self.shape = self.data.shape
-    self.grad = np.zeros_like(data, dtype=np.float32)
+    self.grad = np.zeros_like(data, dtype=np.float64)
     self._prev = _prev
     self._op = _op
     self.label = label
@@ -49,13 +49,13 @@ class Tensor:
     '''
     Add the data of the tensor with another tensor
     '''
-    if isinstance(other, (Tensor, np.ndarray)):
-      other = Tensor(other) if isinstance(other, np.ndarray) else other
+
+
+    if isinstance(other, (Tensor, np.ndarray, int, float)):
+      other = Tensor(other) if isinstance(other, (np.ndarray, int, float)) else other
       if not self.check_broadcastable(other):
         raise ValueError("The shapes of the tensors are not broadcastable")
       out = Tensor(self.data + other.data, _prev=(self, other), _op='add', label=f"{self.label} + {other.label}")
-    elif isinstance(other, (int, float)):
-      out = Tensor(self.data + other, _prev=(self,), _op='add', label=f"{self.label} + {other}")
     else:
       raise TypeError("The input must be a tensor or a number")
     
@@ -82,7 +82,8 @@ class Tensor:
 
         # Get the axes where the shapes will be broadcasted
         other_axes = [axis for axis, (s, os) in enumerate(zip(other_shape, out_shape)) if s == 1 and os != 1]
-        other.grad += np.sum(out.grad, axis=tuple(other_axes), keepdims=True)
+        new_grad = np.sum(out.grad, axis=tuple(other_axes), keepdims=True)
+        other.grad += new_grad.reshape(other.data.shape)
 
     out._backward = _backward
     return out
@@ -110,31 +111,34 @@ class Tensor:
     '''
     Multiply the data of the tensor with another tensor
     '''
-    if isinstance(other, Tensor):
-      other = Tensor(other) if isinstance(other, np.ndarray) else other
+    if isinstance(other, (Tensor, np.ndarray, int, float)):
+      other = Tensor(other) if isinstance(other, (np.ndarray, int, float)) else other
       if not self.check_broadcastable(other):
         raise ValueError("The shapes of the tensors are not broadcastable")
       out = Tensor(self.data * other.data, _prev=(self, other), _op='mul', label=f"{self.label} * {other.label}")
-    elif isinstance(other, (int, float)):
-      out = Tensor(self.data * other, _prev=(self,), _op='mul', label=f"{self.label} * {other}")
     else:
       raise TypeError("The tensor must be a tensor or a number")
     
     def _backward():
-      if isinstance(other, Tensor):
-        if(self.data.shape == other.data.shape):
-          self.grad += other.data * out.grad
-          other.grad += self.data * out.grad
-        # Broadcasting
-        else:
-          if (self.shape[0] == other.shape[0] and len(self.shape) == len(other.shape)):
-            self.grad += np.sum(other.data * out.grad, axis=0)
-            other.grad += np.sum(self.data * out.grad, axis=0)
-          elif (self.shape[-1] == other.shape[-1]):
-            self.grad += np.sum(other.data * out.grad, axis=1)
-            other.grad += np.sum(self.data * out.grad, axis=1)
+      if(self.data.shape == other.data.shape):
+        self.grad += other.data * out.grad
+        other.grad += self.data * out.grad
       else:
-        self.grad += other * out.grad
+        # Broadcasting
+        max_dim = max(len(self.data.shape), len(other.data.shape))
+        self_shape = np.pad(self.data.shape, (max_dim - len(self.data.shape), 0), 'constant', constant_values=1)
+        other_shape = np.pad(other.data.shape, (max_dim - len(other.data.shape), 0), 'constant', constant_values=1)
+        out_shape = np.pad(out.data.shape, (max_dim - len(out.data.shape), 0), 'constant', constant_values=1)
+
+        # Get the axes where the shapes will be broadcasted
+        self_axes = [axis for axis, (s, os) in enumerate(zip(self_shape, out_shape)) if s == 1 and os != 1]
+        other_axes = [axis for axis, (s, os) in enumerate(zip(other_shape, out_shape)) if s == 1 and os != 1]
+
+        new_grad = np.sum(other.data * out.grad, axis=tuple(self_axes), keepdims=True)
+        self.grad += new_grad.reshape(self.data.shape)
+        new_grad = np.sum(self.data * out.grad, axis=tuple(other_axes), keepdims=True)
+        other.grad += new_grad.reshape(other.data.shape)
+
 
     out._backward = _backward
     return out
@@ -158,10 +162,10 @@ class Tensor:
     return out
   
   def __repr__(self):
-    return f"tensor ({self.label}): {self.data}"
+    return f"tensor: {self.data}"
   
   def __str__(self):
-    return f"tensor ({self.label}): {self.data}"
+    return f"tensor: {self.data}"
   
   def ReLU(self):
     '''
@@ -209,7 +213,7 @@ class Tensor:
     '''
     Divide the data of the tensor by another tensor
     '''
-    return self * other ** -1
+    return self * (other ** -1)
 
   def exp(self):
     '''
@@ -242,7 +246,17 @@ class Tensor:
     t = np.sum(self.data, axis=axis, keepdims=keepdims)
     out = Tensor(t, _prev=(self,), _op='sum', label=f"sum({self.label})")
     def _backward():
-      self.grad += np.ones_like(self.data) * out.grad
+      if axis is None:
+        self.grad += np.ones_like(self.data) * out.grad
+      else:
+        output_shape = np.array(out.data.shape) 
+        self_shape = np.array(self.data.shape)
+        axes = np.atleast_1d(axis)
+
+        if not keepdims: # Return the shape to the original shape
+          output_shape = np.insert(output_shape, axes, 1)
+        
+        self.grad += np.broadcast_to(out.grad, self_shape)  # Broadcast the gradient to the original shape
 
     out._backward = _backward
     return out
@@ -434,7 +448,7 @@ class Tensor:
       out = Tensor(t, _prev=(self,), _op='gt', label=f"{self.label} > {other}")
     else:
       raise TypeError("The input must be a tensor or a number")
-    def _backward():
+    def _backward(): # Not differentiable
       pass
 
     out._backward = _backward
