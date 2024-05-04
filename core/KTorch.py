@@ -109,3 +109,10 @@ def softmax(x: Tensor, axis=None) -> Tensor:
   '''
   return x.softmax(axis=axis)
 
+
+def pad(x: Tensor, pad_width, mode='zeros') -> Tensor:
+  '''
+  Pad a tensor
+  '''
+  return x.pad(pad_width, mode=mode)
+  

@@ -548,3 +548,62 @@ class Tensor:
 
     out._backward = _backward
     return out
+  
+  def conv2d(self, weight, stride=1, padding=0):
+    '''
+    Perform the 2D convolution operation
+    '''
+    N, C, H, W = self.data.shape # N - batch size, C - number of channels, H - height, W - width
+    F, _, Kh, Kw = weight.data.shape # F - number of filters, Kh - kernel height, Kw - kernel width
+    H_out = (H + 2 * padding - Kh) // stride + 1
+    W_out = (W + 2 * padding - Kw) // stride + 1
+    t = np.zeros((N, F, H_out, W_out))
+
+    for i in range(H_out):
+      for j in range(W_out):
+        h_start = i * stride
+        h_end = h_start + Kh
+        w_start = j * stride
+        w_end = w_start + Kw
+        x_slice = self.data[:, :, h_start:h_end, w_start:w_end]
+        for f in range(F):
+          t[:, f, i, j] = np.sum(x_slice * weight.data[f], axis=(1, 2, 3))
+
+    out = Tensor(t, _prev=(self, weight), _op='conv2d', label=f"conv2d({self.label}, {weight.label})")
+
+    def _backward():
+      for i in range(H_out):
+        for j in range(W_out):
+          h_start = i * stride
+          h_end = h_start + Kh
+          w_start = j * stride
+          w_end = w_start + Kw
+          inp_region = self.data[:, :, h_start:h_end, w_start:w_end]
+          for f in range(F):
+            weight.grad[f] += np.sum(inp_region * out.grad[:, f, i, j][:, None, None, None], axis=0) # Get the gradient of the weight for the current filter for all elements in the batch
+            self.grad[:, :, h_start:h_end, w_start:w_end] += weight.data[f] * out.grad[:, f, i, j][:, None, None, None] # Get the gradient of the input for the current filter for all elements in the batch
+
+    out._backward = _backward
+    return out
+        
+  
+  def pad(self, pad_width, mode='zeros'):
+    '''
+    Pad the tensor
+    '''
+    if mode == 'zeros':
+      t = np.pad(self.data, pad_width, mode='constant', constant_values=0)
+    elif mode == 'reflect':
+      t = np.pad(self.data, pad_width, mode='reflect')
+    elif mode == 'replicate':
+      t = np.pad(self.data, pad_width, mode='edge')
+    elif mode == 'circular':
+      t = np.pad(self.data, pad_width, mode='wrap')
+
+    out = Tensor(t, _prev=(self,), _op='pad', label=f"pad({self.label})")
+    def _backward():
+      self.grad += out.grad
+
+    out._backward = _backward
+    return out
+    

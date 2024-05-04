@@ -1,5 +1,6 @@
 from core import BaseEstimator
 from metrics.ClassificationMetrics import accuracy_score
+import numpy as np
 
 class SVC(BaseEstimator):
   '''
@@ -34,7 +35,17 @@ class SVC(BaseEstimator):
     self.max_iter = max_iter
 
   def fit(self, X, y):
-    pass 
+    # Convert X and y to numpy arrays
+    if not isinstance(X, np.ndarray):
+      X = np.array(X)
+    if not isinstance(y, np.ndarray):
+      y = np.array(y)
+
+    # Get the number of classes & features
+    self.classes = np.unique(y)
+    self.features = X.shape[1]
+
+    # Fit the model to the data
 
   def predict(self, X):
     pass 

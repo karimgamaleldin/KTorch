@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from autograd.engine import Tensor
 
 def calculate_gain(nonlinearity: str, param=None):
   '''
@@ -18,16 +19,25 @@ def calculate_gain(nonlinearity: str, param=None):
 def _calculate_fan_in_and_fan_out(shape):
   '''
   Calculate the fan_in and fan_out of tensors to be used for initialization functions
+  fan in refers to the number of input features while fan out refers to the number of output features
   '''
   # Checking if the tensor is 1D or 0D
   if len(shape) < 2:
     raise ValueError("Fan in and fan out can not be computed for tensor with less than 2 dimensions")
 
   # using pytorch covention that the input_features is the second dimension
-  fan_in = shape[1] 
-  fan_out = shape[0]
+  if len(shape) == 2:
+    fan_in = shape[1] 
+    fan_out = shape[0]
+  elif len(shape) == 3:
+    fan_in = shape[1] * shape[2]
+    fan_out = shape[0]
+  elif len(shape) == 4:
+    fan_in = shape[1] * shape[2] * shape[3]
+    fan_out = shape[0]
+  else:
+    raise ValueError("Fan in and fan out can not be computed for tensor with more than 4 dimensions")
 
-  # todo: check if the tensor is 3D or 4D and calculate the fan_in and fan_out accordingly
   return fan_in, fan_out
 
 def simpleUniformInitialization(shape, fan='fan_in', out_shape=None):
@@ -38,9 +48,11 @@ def simpleUniformInitialization(shape, fan='fan_in', out_shape=None):
   fan = fan_in if fan == 'fan_in' else fan_out # get the fan value that we want to use
   bound = 1 / math.sqrt(fan) # calculate the bound
   if out_shape is not None:
-    return np.random.uniform(-bound, bound, out_shape)
+    return Tensor(np.random.uniform(-bound, bound, out_shape))
   else:
-    return np.random.uniform(-bound, bound, shape)
+    return Tensor(np.random.uniform(-bound, bound, shape))
+  
+
   
 
 
