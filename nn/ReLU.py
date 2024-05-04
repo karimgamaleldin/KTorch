@@ -1,10 +1,10 @@
 from autograd.engine import Tensor
 from core import KTorch
-import nn
+from nn.Module import Module
 
-class ReLU(nn.Module):
+class ReLU(Module):
   '''
-  A class that represents the tanh activation function
+  A class that represents the ReLU activation function
   '''
   def __init__(self):
     '''

@@ -1,8 +1,8 @@
 from autograd.engine import Tensor
 from core import KTorch
-import nn
+from nn.Module import Module
 
-class Tanh(nn.Module):
+class Tanh(Module):
   '''
   A class that represents the tanh activation function
   '''

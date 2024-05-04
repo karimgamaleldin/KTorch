@@ -1,8 +1,8 @@
 from autograd.engine import Tensor
 from core import KTorch
-import nn 
+from nn.Module import Module 
 
-class Sigmoid(nn.Module):
+class Sigmoid(Module):
   '''
   A class that represents the sigmoid activation function
   '''
