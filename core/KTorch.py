@@ -115,4 +115,11 @@ def pad(x: Tensor, pad_width, mode='zeros') -> Tensor:
   Pad a tensor
   '''
   return x.pad(pad_width, mode=mode)
+
+def cat(tensors: list, axis=0) -> Tensor:
+  '''
+  Concatenate tensors
+  '''
+  return Tensor.cat(tensors, axis=axis)
+
   

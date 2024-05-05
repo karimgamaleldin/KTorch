@@ -46,9 +46,17 @@ class SVC(BaseEstimator):
     self.features = X.shape[1]
 
     # Fit the model to the data
+    self.betas = self._fit(X, y)
 
   def predict(self, X):
-    pass 
+    # Convert X to numpy array
+    if not isinstance(X, np.ndarray):
+      X = np.array(X)
+
+    # Predict the labels
+    pred = self.betas @ self._kernel(self.X, X)
+    
+    return np.sign(pred)
 
   def evaluate(self, X, y, metric=accuracy_score):
     preds = self.predict(X)

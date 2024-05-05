@@ -606,4 +606,33 @@ class Tensor:
 
     out._backward = _backward
     return out
+  
+
+  def flip(self, axis):
+    '''
+    Flip the tensor
+    '''
+    t = np.flip(self.data, axis=axis)
+    out = Tensor(t, _prev=(self,), _op='flip', label=f"flip({self.label})")
+    def _backward():
+      self.grad += np.flip(out.grad, axis=axis)
+
+    out._backward = _backward
+    return out
+  
+  def cat(tensors, axis=0):
+    '''
+    Concatenate tensors
+    '''
+    t = np.concatenate([x.data for x in tensors], axis=axis)
+    out = Tensor(t, _prev=tensors, _op='cat', label=f"cat({[x.label for x in tensors]})")
+    def _backward():
+      start = 0
+      for x in tensors: # Iterate over the tensors
+        end = start + x.data.shape[axis] # Get the range of the current tensor
+        x.grad += out.grad.take(range(start, end), axis=axis) # Add the gradient of the current tensor
+        start = end # Update the start index for the next tensor
+
+    out._backward = _backward
+    return out
     
