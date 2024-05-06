@@ -6,3 +6,10 @@ from .Module import Module
 from .Dropout import Dropout
 from .Linear import Linear
 from .RNNBase import RNNBase
+from .RNNCell import RNNCell
+from .RNN import RNN
+from .BatchNorm1D import BatchNorm1D
+from .BatchNorm2D import BatchNorm2D
+from .BatchNorm3D import BatchNorm3D
+from .Conv2d import Conv2d
+from .Embedding import Embedding
