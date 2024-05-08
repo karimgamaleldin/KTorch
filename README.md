@@ -10,11 +10,51 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
   
 [![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
 ![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)
-![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white)
   
 </div>
 
-## Features
+## Features & Algorithms
+
+This repository contains the following:
+
+<details>
+<summary>Machine learning algorithms</summary>
+
+- Linear Regression
+
+</details>
+
+<details>
+<summary>Autograd Engine</summary>
+
+- Tensor class
+
+</details>
+
+<details>
+<summary>Neural network layers</summary>
+
+-
+
+</details>
+
+<details>
+<summary>Optimizers</summary>
+
+- [Stochastic Gradient Descent](./optim/SGD.py)
+- [RMSProp](./optim/RMSProp.py)
+- [AdaDelta](./optim/Adadelta.py)
+- [Adagrad](./optim/Adagrad.py)
+- [Adam](./optim/Adam.py)
+
+</details>
+
+<details>
+<summary>Utilites (Metrics and other stuff)</summary>
+
+-
+
+</details>
 
 ## Code Examples
 
