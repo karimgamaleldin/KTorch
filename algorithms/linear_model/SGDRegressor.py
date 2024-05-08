@@ -1,5 +1,5 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.RegressionMetrics import mean_squared_error, huber, epsilon_insensitive, squared_epsilon_insensitive
+from utils.RegressionMetrics import mean_squared_error, huber, epsilon_insensitive, squared_epsilon_insensitive
 import numpy as np
 
 class SGDRegressor(BaseEstimator):

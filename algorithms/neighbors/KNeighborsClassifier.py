@@ -1,6 +1,6 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.ClassificationMetrics import accuracy_score
-from metrics.DistanceMetrics import minkowski_distance, manhattan_distance, euclidean_distance
+from utils.ClassificationMetrics import accuracy_score
+from utils.DistanceMetrics import minkowski_distance, manhattan_distance, euclidean_distance
 import numpy as np
 
 class KNeighborsClassifier(BaseEstimator):

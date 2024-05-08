@@ -1,5 +1,5 @@
 from core.algorithm_interfaces.DecisionTreeInterface import DecisionTreeInterface
-from metrics.RegressionMetrics import mean_squared_error, friedman_mse, mean_absolute_error, mean_poisson_deviance
+from utils.RegressionMetrics import mean_squared_error, friedman_mse, mean_absolute_error, mean_poisson_deviance
 import numpy as np
 
 class DecisionTreeRegressor(DecisionTreeInterface):

@@ -35,12 +35,19 @@ class BatchNorm3D(nn.Module):
     # Check if training mode is on and if true track runing statistics else use running statistics
     if self.training:
       mean = KTorch.mean(x, axis=(0, 2, 3, 4), keepdims=True)
-      var = KTorch.var(x, axis=(0, 2, 3, 4), keepdims=True)
-      self.running_mean = (1 - self.momentum) * self.running_mean + self.momentum * mean
-      self.running_var = (1 - self.momentum) * self.running_var + self.momentum * var
+      var = KTorch.var(x, axis=(0, 2, 3, 4), keepdims=True, unbiased=False) # Biased variance like PyTorch
+      if self.track_running_stats:
+        self.running_mean = (1 - self.momentum) * self.running_mean + self.momentum * mean
+        temp_var = KTorch.var(x, axis=(0, 2, 3, 4), keepdims=True, unbiased=True)
+        self.running_var = (1 - self.momentum) * self.running_var + self.momentum * temp_var
     else:
-      mean = self.running_mean
-      var = self.running_var
+      if self.track_running_stats:
+        mean = self.running_mean
+        var = self.running_var
+      else:
+        assert x.shape[0] > 1, "Batch size must be greater than 1 for inference mode without tracking running statistics"
+        mean = KTorch.mean(x, axis=(0, 2, 3, 4), keepdims=True)
+        var = KTorch.var(x, axis=(0, 2, 3, 4), keepdims=True, unbiased=False) # Biased variance like PyTorch
 
     # Normalize the input
     x = (x - mean) / KTorch.sqrt(var + self.eps)

@@ -1,5 +1,5 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.ClassificationMetrics import accuracy_score
+from utils.ClassificationMetrics import accuracy_score
 import numpy as np
 
 class QuadraticDiscriminantAnalysis(BaseEstimator):

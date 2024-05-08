@@ -1,4 +1,4 @@
-from metrics.RegressionMetrics import mean_squared_error
+from utils.RegressionMetrics import mean_squared_error
 
 class BaseEstimator:
   '''

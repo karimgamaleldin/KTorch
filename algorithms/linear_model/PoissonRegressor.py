@@ -1,5 +1,5 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.RegressionMetrics import mean_squared_error
+from utils.RegressionMetrics import mean_squared_error
 import numpy as np
 
 class PoissonRegressor(BaseEstimator):

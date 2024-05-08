@@ -1,7 +1,7 @@
 from core.BaseEstimator import BaseEstimator
-from klearn.tree.DecisionTreeRegressor import DecisionTreeRegressor
+from algorithms.tree.DecisionTreeRegressor import DecisionTreeRegressor
 import numpy as np
-from metrics.RegressionMetrics import mean_squared_error, friedman_mse, mean_absolute_error, mean_poisson_deviance
+from utils.RegressionMetrics import mean_squared_error, friedman_mse, mean_absolute_error, mean_poisson_deviance
 
 class RandomForestRegressor(BaseEstimator):
   '''

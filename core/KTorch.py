@@ -55,17 +55,17 @@ def sqrt(x: Tensor) -> Tensor:
   '''
   return x.sqrt()
 
-def mean(x: Tensor, axis=None, keepdim=False) -> Tensor:
+def mean(x: Tensor, axis=None, keepdims=False) -> Tensor:
   '''
   Compute the mean of a tensor
   '''
-  return x.mean(axis=axis, keepdim=keepdim)
+  return x.mean(axis=axis, keepdims=keepdims)
 
-def var(x: Tensor, axis=None, keepdim=False) -> Tensor:
+def var(x: Tensor, axis=None, keepdims=False, unbiased=False) -> Tensor:
   '''
   Compute the variance of a tensor
   '''
-  return x.var(axis=axis, keepdim=keepdim)
+  return x.var(axis=axis, keepdims=keepdims, unbiased=unbiased)
 
 def rand(shape) -> Tensor:
   '''

@@ -1,6 +1,6 @@
 from core.BaseEstimator import BaseEstimator
 import numpy as np
-from metrics.ClassificationMetrics import accuracy_score
+from utils.ClassificationMetrics import accuracy_score
 from scipy.sparse import issparse
 
 class MultinomialNB(BaseEstimator):

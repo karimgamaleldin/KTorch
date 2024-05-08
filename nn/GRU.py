@@ -14,7 +14,7 @@ class GRU(RNNBase):
     Initialize the GRU
     '''
     super().__init__(input_size, hidden_size, num_layers, bias, dropout, bidirectional)
-    self.rnn_layers = [ GRUCell(input_size, hidden_size, bias) for _ in range(num_layers) ]
+    self.gru_layers = [ GRUCell(input_size, hidden_size, bias) for _ in range(num_layers) ]
     self.dropout_layers = [ Dropout(dropout) for _ in range(num_layers) ]
     self.bidirectional = bidirectional
     self.bi_rnn_layers = [ GRUCell(input_size, hidden_size, bias) for _ in range(num_layers) ] if bidirectional else None
@@ -53,7 +53,7 @@ class GRU(RNNBase):
     output = []
     for i in range(seq_len): # iterate over the sequence length
       for j in range(self.num_layers):
-        temp = self.rnn_layers[j](x[:, i, :], h_prev[j])
+        temp = self.gru_layers[j](x[:, i, :], h_prev[j])
         temp = self.dropout_layers[j](h_prev[j])
         h_curr.append(temp)
       output.append(h_curr[-1])

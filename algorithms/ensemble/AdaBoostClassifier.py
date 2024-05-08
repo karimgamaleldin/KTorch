@@ -1,7 +1,7 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.ClassificationMetrics import accuracy_score
+from utils.ClassificationMetrics import accuracy_score
 import numpy as np
-from klearn.tree.DecisionTreeClassifier import DecisionTreeClassifier
+from algorithms.tree.DecisionTreeClassifier import DecisionTreeClassifier
 
 class AdaBoostClassifier(BaseEstimator):
   '''

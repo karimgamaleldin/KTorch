@@ -14,14 +14,15 @@ class Tensor:
       _prev: tuple: the previous tensors that were used to compute the current tensor
       op: string: the operation that was used to compute the current tensor
     '''
-    self.data = np.array(data, dtype=np.float64)
+    self.data = np.array(data, dtype=np.float32)
     self.shape = self.data.shape
-    self.grad = np.zeros_like(data, dtype=np.float64)
+    self.grad = np.zeros_like(data, dtype=np.float32)
     self._prev = _prev
     self._op = _op
     self.label = label
     self._backward = lambda: None
     self.requires_grad = requires_grad
+    self.ndim = self.data.ndim
 
 
   def check_broadcastable(self, other: 'Tensor'):
@@ -49,10 +50,10 @@ class Tensor:
     '''
     Add the data of the tensor with another tensor
     '''
-
-
+    print(isinstance(other, (int, float)))
     if isinstance(other, (Tensor, np.ndarray, int, float)):
-      other = Tensor(other) if isinstance(other, (np.ndarray, int, float)) else other
+      other = Tensor(other) if isinstance(other, (np.ndarray)) else other
+      other = Tensor(np.array([other])) if isinstance(other, (int, float)) else other # Convert to tensor if it is a number
       if not self.check_broadcastable(other):
         raise ValueError("The shapes of the tensors are not broadcastable")
       out = Tensor(self.data + other.data, _prev=(self, other), _op='add', label=f"{self.label} + {other.label}")
@@ -72,7 +73,9 @@ class Tensor:
 
         # Get the axes where the shapes will be broadcasted
         self_axes = [axis for axis, (s, os) in enumerate(zip(self_shape, out_shape)) if s == 1 and os != 1]
-        self.grad += np.sum(out.grad, axis=tuple(self_axes), keepdims=True)
+        new_grad = np.sum(out.grad, axis=tuple(self_axes), keepdims=True)
+        self.grad += new_grad.reshape(self.data.shape)
+        print(self_axes, self.data.shape)
 
         # Check for other and out
         # Pad the shapes with ones
@@ -84,6 +87,7 @@ class Tensor:
         other_axes = [axis for axis, (s, os) in enumerate(zip(other_shape, out_shape)) if s == 1 and os != 1]
         new_grad = np.sum(out.grad, axis=tuple(other_axes), keepdims=True)
         other.grad += new_grad.reshape(other.data.shape)
+        print(other_axes, other.data.shape)
 
     out._backward = _backward
     return out
@@ -156,7 +160,7 @@ class Tensor:
     assert isinstance(other, (int, float)), "The exponent must be a number"
     out = Tensor(self.data ** other, _prev=(self,), _op='pow', label=f"{self.label} ** {other}")
     def _backward():
-      self.grad += other * self.data ** (other - 1) * out.grad
+      self.grad += other * np.power(self.data, other - 1) * out.grad
 
     out._backward = _backward
     return out
@@ -333,7 +337,7 @@ class Tensor:
     t = np.sqrt(self.data)
     out = Tensor(t, _prev=(self,), _op='sqrt', label=f"sqrt({self.label})")
     def _backward():
-      self.grad += 0.5 * self.data ** -0.5 * out.grad
+      self.grad += 0.5 * np.power(self.data, -0.5) * out.grad
 
     out._backward = _backward
     return out
@@ -351,17 +355,31 @@ class Tensor:
     out._backward = _backward
     return out
 
-  def var(self, axis=None, keepdims=False):
+  def var(self, axis=None, keepdims=False, unbiased=False):
     '''
     Compute the variance of the tensor
     '''
-    t = np.var(self.data, axis=axis, keepdims=keepdims)
+    t = np.var(self.data, axis=axis, keepdims=keepdims, ddof=1 if unbiased else 0)
     out = Tensor(t, _prev=(self,), _op='var', label=f"var({self.label})")
     def _backward():
-      self.grad += 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) * out.grad / self.data.size
+      if unbiased:
+        self.grad += 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) * out.grad / (self.data.size - 1)
+      else:
+        self.grad += 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) * out.grad / self.data.size
 
     out._backward = _backward
     return out
+
+    # '''
+    # Compute the variance of the tensor
+    # '''
+    # t = np.var(self.data, axis=axis, keepdims=keepdims)
+    # out = Tensor(t, _prev=(self,), _op='var', label=f"var({self.label})")
+    # def _backward():
+    #   self.grad += 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) * out.grad / self.data.size
+
+    # out._backward = _backward
+    # return out
   
   def __getitem__(self, idx):
     '''

@@ -1,6 +1,6 @@
 from core.BaseEstimator import BaseEstimator
-from klearn.tree.DecisionTreeClassifier import DecisionTreeClassifier
-from metrics.ClassificationMetrics import gini_index, entropy, accuracy_score
+from algorithms.tree.DecisionTreeClassifier import DecisionTreeClassifier
+from utils.ClassificationMetrics import gini_index, entropy, accuracy_score
 from scipy.stats import mode
 import numpy as np
 

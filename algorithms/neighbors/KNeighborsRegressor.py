@@ -1,6 +1,6 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.RegressionMetrics import mean_squared_error, r_squared
-from metrics.DistanceMetrics import minkowski_distance, manhattan_distance, euclidean_distance
+from utils.RegressionMetrics import mean_squared_error, r_squared
+from utils.DistanceMetrics import minkowski_distance, manhattan_distance, euclidean_distance
 import numpy as np
 
 class KNeighborsRegressor(BaseEstimator):

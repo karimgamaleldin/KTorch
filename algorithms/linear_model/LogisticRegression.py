@@ -1,6 +1,6 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.ClassificationMetrics import accuracy_score
-from metrics.Functions import sigmoid, softmax
+from utils.ClassificationMetrics import accuracy_score
+from utils.Functions import sigmoid, softmax
 import numpy as np
 
 class LogisticRegression(BaseEstimator):

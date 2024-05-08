@@ -1,5 +1,5 @@
 from core.algorithm_interfaces.DecisionTreeInterface import DecisionTreeInterface
-from metrics.ClassificationMetrics import accuracy_score, gini_index, entropy
+from utils.ClassificationMetrics import accuracy_score, gini_index, entropy
 import numpy as np
 
 class DecisionTreeClassifier(DecisionTreeInterface):

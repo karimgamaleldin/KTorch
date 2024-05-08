@@ -1,5 +1,5 @@
 from core.BaseEstimator import BaseEstimator
-from metrics.RegressionMetrics import mean_squared_error, r_squared
+from utils.RegressionMetrics import mean_squared_error, r_squared
 import numpy as np
 
 class LinearRegression(BaseEstimator):
