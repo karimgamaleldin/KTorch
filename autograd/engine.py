@@ -50,7 +50,6 @@ class Tensor:
     '''
     Add the data of the tensor with another tensor
     '''
-    print(isinstance(other, (int, float)))
     if isinstance(other, (Tensor, np.ndarray, int, float)):
       other = Tensor(other) if isinstance(other, (np.ndarray)) else other
       other = Tensor(np.array([other])) if isinstance(other, (int, float)) else other # Convert to tensor if it is a number
@@ -75,7 +74,6 @@ class Tensor:
         self_axes = [axis for axis, (s, os) in enumerate(zip(self_shape, out_shape)) if s == 1 and os != 1]
         new_grad = np.sum(out.grad, axis=tuple(self_axes), keepdims=True)
         self.grad += new_grad.reshape(self.data.shape)
-        print(self_axes, self.data.shape)
 
         # Check for other and out
         # Pad the shapes with ones
@@ -87,7 +85,6 @@ class Tensor:
         other_axes = [axis for axis, (s, os) in enumerate(zip(other_shape, out_shape)) if s == 1 and os != 1]
         new_grad = np.sum(out.grad, axis=tuple(other_axes), keepdims=True)
         other.grad += new_grad.reshape(other.data.shape)
-        print(other_axes, other.data.shape)
 
     out._backward = _backward
     return out
@@ -125,8 +122,8 @@ class Tensor:
     
     def _backward():
       if(self.data.shape == other.data.shape):
-        self.grad += other.data * out.grad
-        other.grad += self.data * out.grad
+        self.grad += out.grad * other.data
+        other.grad += out.grad * self.data
       else:
         # Broadcasting
         max_dim = max(len(self.data.shape), len(other.data.shape))
@@ -138,9 +135,9 @@ class Tensor:
         self_axes = [axis for axis, (s, os) in enumerate(zip(self_shape, out_shape)) if s == 1 and os != 1]
         other_axes = [axis for axis, (s, os) in enumerate(zip(other_shape, out_shape)) if s == 1 and os != 1]
 
-        new_grad = np.sum(other.data * out.grad, axis=tuple(self_axes), keepdims=True)
+        new_grad = np.sum(out.grad * other.data, axis=tuple(self_axes), keepdims=True)
         self.grad += new_grad.reshape(self.data.shape)
-        new_grad = np.sum(self.data * out.grad, axis=tuple(other_axes), keepdims=True)
+        new_grad = np.sum(out.grad * self.data, axis=tuple(other_axes), keepdims=True)
         other.grad += new_grad.reshape(other.data.shape)
 
 
@@ -160,7 +157,7 @@ class Tensor:
     assert isinstance(other, (int, float)), "The exponent must be a number"
     out = Tensor(self.data ** other, _prev=(self,), _op='pow', label=f"{self.label} ** {other}")
     def _backward():
-      self.grad += other * np.power(self.data, other - 1) * out.grad
+      self.grad += out.grad * other * np.power(self.data, other - 1)
 
     out._backward = _backward
     return out
@@ -177,7 +174,7 @@ class Tensor:
     '''
     out = Tensor(np.maximum(self.data, 0), _prev=(self,), _op='ReLU', label=f"ReLU({self.label})")
     def _backward():
-      self.grad += (self.data > 0) * out.grad
+      self.grad += out.grad * (self.data > 0)
 
     out._backward = _backward
     return out
@@ -190,7 +187,7 @@ class Tensor:
     out = Tensor(t, _prev=(self,), _op='sigmoid', label=f"sigmoid({self.label})")
 
     def _backward():
-      self.grad += t * (1 - t) * out.grad
+      self.grad += out.grad * t * (1 - t)
 
     out._backward = _backward
     return out
@@ -202,7 +199,7 @@ class Tensor:
     t = np.tanh(self.data)
     out = Tensor(t, _prev=(self,), _op='tanh', label=f"tanh({self.label})")
     def _backward():
-      self.grad += (1 - t ** 2) * out.grad 
+      self.grad += out.grad * (1 - t ** 2) 
 
     out._backward = _backward
     return out
@@ -226,7 +223,7 @@ class Tensor:
     t = np.exp(self.data)
     out = Tensor(t, _prev=(self,), _op='exp', label=f"exp({self.label})")
     def _backward():
-      self.grad += t * out.grad
+      self.grad += out.grad * t
 
     out._backward = _backward
     return out
@@ -238,7 +235,7 @@ class Tensor:
     t = np.log(self.data)
     out = Tensor(t, _prev=(self,), _op='log', label=f"log({self.label})")
     def _backward():
-      self.grad += 1 / self.data * out.grad
+      self.grad += out.grad * 1 / self.data 
 
     out._backward = _backward
     return out
@@ -251,7 +248,7 @@ class Tensor:
     out = Tensor(t, _prev=(self,), _op='sum', label=f"sum({self.label})")
     def _backward():
       if axis is None:
-        self.grad += np.ones_like(self.data) * out.grad
+        self.grad += out.grad * np.ones_like(self.data) 
       else:
         output_shape = np.array(out.data.shape) 
         self_shape = np.array(self.data.shape)
@@ -337,7 +334,7 @@ class Tensor:
     t = np.sqrt(self.data)
     out = Tensor(t, _prev=(self,), _op='sqrt', label=f"sqrt({self.label})")
     def _backward():
-      self.grad += 0.5 * np.power(self.data, -0.5) * out.grad
+      self.grad += out.grad * 0.5 * np.power(self.data, -0.5)
 
     out._backward = _backward
     return out
@@ -363,9 +360,9 @@ class Tensor:
     out = Tensor(t, _prev=(self,), _op='var', label=f"var({self.label})")
     def _backward():
       if unbiased:
-        self.grad += 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) * out.grad / (self.data.size - 1)
+        self.grad += out.grad * 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) / (self.data.size - 1)
       else:
-        self.grad += 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data) * out.grad / self.data.size
+        self.grad += out.grad * 2 * (self.data - self.mean(axis=axis, keepdims=keepdims).data)  / self.data.size
 
     out._backward = _backward
     return out
@@ -486,7 +483,8 @@ class Tensor:
     t = 0.5 * (1 + erf(self.data / np.sqrt(2)))
     out = Tensor(t, _prev=(self,), _op='phi', label=f"phi({self.label})")
     def _backward():
-      self.grad += (1 / np.sqrt(2 * np.pi)) * np.exp(-0.5 * self.data ** 2) * out.grad
+      self.grad += out.grad * (1 / np.sqrt(2 * np.pi)) * np.exp(-0.5 * self.data ** 2)
+
 
     out._backward = _backward
     return out

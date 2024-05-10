@@ -19,19 +19,19 @@ class Linear(nn.Module):
     super().__init__()
     self.in_features = in_features
     self.out_features = out_features
-    self.shape = (out_features, in_features)
-    self.weight = KTorch.tensor(simpleUniformInitialization(self.shape)) # initialize the weights using the uniform distribution
-    self.bias = KTorch.tensor(simpleUniformInitialization((1,out_features), out_shape=(out_features))) if bias else None # initialize the bias using the uniform distribution if bias is True
+    self.shape = (in_features, out_features) # the shape of the weight matrix
+    self.weight = simpleUniformInitialization(self.shape) # initialize the weights using the uniform distribution
+    self.bias = simpleUniformInitialization((1,out_features), out_shape=(out_features)) if bias else None # initialize the bias using the uniform distribution if bias is True
 
   def forward(self, x: Tensor) -> Tensor:
     '''
     Perform the forward pass of the linear layer
     out = x * W^T + b
     '''
-    self.out = KTorch.matmul(x, self.weight.data.T)
-    self.inp = x
+    assert type(x) == Tensor, 'Input must be a tensor'
+    self.out = KTorch.matmul(x, self.weight)
     if self.bias is not None:
-      self.out += self.bias 
+      self.out = self.out + self.bias 
     return self.out 
 
   def parameters(self):

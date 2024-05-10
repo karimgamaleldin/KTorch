@@ -18,7 +18,9 @@ class GELU(Module):
 
   def forward(self, x: Tensor) -> Tensor:
     if self.approximate == 'none':
-      return x * x.phi()
+      temp = x * x.phi()
+      print(temp)
+      return temp
     elif self.approximate == 'tanh':
       return 0.5 * x * (1 + KTorch.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * x ** 3)))
 
@@ -27,3 +29,4 @@ class GELU(Module):
     Return the parameters of the GELU activation function.
     '''
     return []
+
