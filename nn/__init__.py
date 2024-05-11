@@ -13,3 +13,4 @@ from .BatchNorm2D import BatchNorm2D
 from .BatchNorm3D import BatchNorm3D
 from .Conv2d import Conv2d
 from .Embedding import Embedding
+from .Softmax import Softmax

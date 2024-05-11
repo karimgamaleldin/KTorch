@@ -123,3 +123,26 @@ def cat(tensors: list, axis=0) -> Tensor:
   return Tensor.cat(tensors, axis=axis)
 
   
+def sum(x: Tensor, axis=None, keepdims=False) -> Tensor:
+  '''
+  Compute the sum of a tensor
+  '''
+  return x.sum(axis=axis, keepdims=keepdims)
+
+def log(x: Tensor) -> Tensor:
+  '''
+  Compute the natural logarithm of a tensor
+  '''
+  return x.log()
+
+def one_hot(x: Tensor, num_classes: int) -> Tensor:
+  '''
+  Create a one hot tensor
+  '''
+  return x.one_hot(num_classes)
+
+def clamp(x: Tensor, min_val, max_val) -> Tensor:
+  '''
+  Clamp the values of a tensor
+  '''
+  return x.clamp(min_val, max_val)

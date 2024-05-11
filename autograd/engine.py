@@ -515,15 +515,19 @@ class Tensor:
     out._backward = _backward
     return out
   
-  def softmax(self, x, axis):
+  def softmax(self, axis):
     '''
     Compute the softmax of the tensor
     '''
-    t = np.exp(x.data - np.max(x.data, axis=axis, keepdims=True)) # Numerically stable
+    t = np.exp(self.data - np.max(self.data, axis=axis, keepdims=True)).astype(np.float32) # Numerically stable
     t = t / np.sum(t, axis=axis, keepdims=True)
-    out = Tensor(t, _prev=(x,), _op='softmax', label=f"softmax({x.label})")
-    def _backward():
-      self.grad += out.grad
+    out = Tensor(t, _prev=(self,), _op='softmax', label=f"softmax({self.label})")
+    def _backward(): # Softmax derivative
+      classes = self.data.shape[-1]
+      diag_p = np.eye(classes).astype(np.float32) *  t.copy().reshape(-1, classes, 1) # (classes, classes) * (batch, classes, 1) - (batch, classes, classes)
+      p_p = t.copy().reshape(-1, classes, 1) * t.copy().reshape(-1, 1, classes) # (batch, classes, 1) * (batch, 1, classes)
+      total_p = diag_p - p_p
+      self.grad += out.grad * np.sum(total_p, axis=-1)
 
     out._backward = _backward
     return out
@@ -652,3 +656,27 @@ class Tensor:
     out._backward = _backward
     return out
     
+  def clamp(self, min_val, max_val):
+    '''
+    Clamp the tensor
+    '''
+    assert min_val <= max_val, "The minimum value must be less than or equal to the maximum value"
+    t = np.clip(self.data, min_val, max_val)
+    out = Tensor(t, _prev=(self,), _op='clamp', label=f"clamp({self.label})")
+    def _backward():
+      self.grad += (min_val <= self.data) * (self.data <= max_val) * out.grad
+
+    out._backward = _backward
+    return out
+  
+  def one_hot(self, num_classes):
+    '''
+    Perform one hot encoding
+    '''
+    t = np.eye(num_classes)[self.data]
+    out = Tensor(t, _prev=(self,), _op='one_hot', label=f"one_hot({self.label})")
+    def _backward():
+      self.grad += out.grad
+
+    out._backward = _backward
+    return out
