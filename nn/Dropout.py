@@ -1,6 +1,5 @@
-import nn
 from core import KTorch
-from autograd.engine import Tensor
+from autograd import Tensor
 from nn.Module import Module
 
 class Dropout(Module):
@@ -23,9 +22,12 @@ class Dropout(Module):
     '''
     Perform the forward pass of the dropout layer
     '''
-    self.mask = KTorch.rand(x.shape) > self.p
-    self.out = x * self.mask * (1.0 / (1.0 - self.p)) # scale the output by 1/(1-p) to maintain the expected value
-    return self.out 
+    if self.training:
+      mask = KTorch.rand(x.shape) > self.p
+      out = x * mask * (1.0 / (1.0 - self.p)) # scale the output by 1/(1-p) to maintain the expected value
+    else:
+      out = x
+    return out, mask
 
   def parameters(self):
     '''

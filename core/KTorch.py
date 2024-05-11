@@ -69,7 +69,7 @@ def var(x: Tensor, axis=None, keepdims=False, unbiased=False) -> Tensor:
 
 def rand(shape) -> Tensor:
   '''
-  Create a tensor of random numbers
+  Create a tensor of random numbers between 0 and 1
   '''
   return Tensor(np.random.rand(*shape))
 
