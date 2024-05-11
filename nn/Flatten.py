@@ -1,7 +1,7 @@
 from autograd.engine import Tensor
-import nn
+from nn.Module import Module
 
-class Flatten(nn.Module):
+class Flatten(Module):
   def __init__(self, start_dim=None, end_dim=-1):
     '''
     Initialize the flatten layer
@@ -12,3 +12,6 @@ class Flatten(nn.Module):
 
   def forward(self, x: Tensor) -> Tensor:
     return x.flatten(self.start_dim, self.end_dim)
+  
+  def parameters(self):
+    return []
