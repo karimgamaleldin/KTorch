@@ -47,6 +47,7 @@ This repository contains the following:
   - [Categorical Crossentropy](./nn/CrossEntropyLoss.py)
   - [Binary Crossentropy](./nn/BCELoss.py)
   - [Mean Squared Error](./nn/MSELoss.py)
+  -
 
 </details>
 
