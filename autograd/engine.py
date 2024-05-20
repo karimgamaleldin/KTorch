@@ -162,6 +162,12 @@ class Tensor:
     out._backward = _backward
     return out
   
+  def square(self):
+    '''
+    Square the data of the tensor
+    '''
+    return self.__pow__(2)
+  
   def __repr__(self):
     return f"tensor: {self.data}"
   

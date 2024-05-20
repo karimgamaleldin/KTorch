@@ -15,3 +15,6 @@ from .Conv2d import Conv2d
 from .Embedding import Embedding
 from .Softmax import Softmax
 from .Flatten import Flatten
+from .MSELoss import MSELoss
+from .CrossEntropyLoss import CrossEntropyLoss
+from .BCELoss import BCELoss

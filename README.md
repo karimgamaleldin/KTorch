@@ -43,6 +43,10 @@ This repository contains the following:
   - [Softmax](./nn/Softmax.py)
   - [ReLU](./nn/ReLU.py)
   - [GELU](./nn/GELU.py)
+- Loss Functions
+  - [Categorical Crossentropy](./nn/CrossEntropyLoss.py)
+  - [Binary Crossentropy](./nn/BCELoss.py)
+  - [Mean Squared Error](./nn/MSELoss.py)
 
 </details>
 

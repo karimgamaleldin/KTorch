@@ -146,3 +146,9 @@ def clamp(x: Tensor, min_val, max_val) -> Tensor:
   Clamp the values of a tensor
   '''
   return x.clamp(min_val, max_val)
+
+def square(x: Tensor) -> Tensor:
+  '''
+  Compute the square of a tensor
+  '''
+  return x.square()
