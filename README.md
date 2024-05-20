@@ -27,14 +27,22 @@ This repository contains the following:
 <details>
 <summary>Autograd Engine</summary>
 
-- Tensor class
+- [Tensor](./autograd/engine.py)
 
 </details>
 
 <details>
 <summary>Neural network layers</summary>
 
--
+- [Linear Layer](./nn/Linear.py)
+- [Flatten](./nn/Flatten.py)
+- [Dropout](./nn/Dropout.py)
+- Activation Functions
+  - [Tanh](./nn/Tanh.py)
+  - [Sigmoid](./nn/Sigmoid.py)
+  - [Softmax](./nn/Softmax.py)
+  - [ReLU](./nn/ReLU.py)
+  - [GELU](./nn/GELU.py)
 
 </details>
 
@@ -46,6 +54,13 @@ This repository contains the following:
 - [AdaDelta](./optim/Adadelta.py)
 - [Adagrad](./optim/Adagrad.py)
 - [Adam](./optim/Adam.py)
+
+</details>
+
+<details>
+<summary>Tokenizers</summary>
+
+- [Byte Pair Encoding](./tokenizer/BPE.py)
 
 </details>
 
