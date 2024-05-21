@@ -11,11 +11,11 @@ class Module:
     '''
     self.training = True
   
-  def __call__(self, x: Tensor) -> Tensor:
+  def __call__(self, *args) -> Tensor:
     '''
     Perform the forward pass of the module
     '''
-    return self.forward(x)
+    return self.forward(*args)
 
   def forward(self, x: Tensor) -> Tensor:
     '''

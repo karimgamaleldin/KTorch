@@ -241,7 +241,7 @@ class Tensor:
     t = np.log(self.data)
     out = Tensor(t, _prev=(self,), _op='log', label=f"log({self.label})")
     def _backward():
-      self.grad += out.grad * 1 / self.data 
+      self.grad += out.grad * 1 / self.data
 
     out._backward = _backward
     return out
@@ -670,7 +670,7 @@ class Tensor:
     t = np.clip(self.data, min_val, max_val)
     out = Tensor(t, _prev=(self,), _op='clamp', label=f"clamp({self.label})")
     def _backward():
-      self.grad += (min_val <= self.data) * (self.data <= max_val) * out.grad
+      self.grad += (min_val <= self.data) * (self.data <= max_val) * out.grad # The gradient is back propagated only if the value is within the range.
 
     out._backward = _backward
     return out
