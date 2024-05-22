@@ -5,6 +5,7 @@
 KTorch is a dedicated repository for machine learning and deep learning algorithms. It contains handcrafted implementations of popular machine learning algorithms, neural networks' layers, autograd engine and much more.
 
 ## Build Status
+
 - The project is currently in development
 - Implemented and Ready to use Machine Learning Algorithms, Neural Network layers and others can be found in the `Features & Algorithms` section
 - Transformers are being tested
@@ -22,19 +23,65 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
 
 ## Features & Algorithms
 
-This repository contains the following:
+The following algorithms are implemented, tested and used on different datasets, which could be found in [Example Notebooks](./examples_notebooks/):
 
 <details>
 <summary>Machine learning algorithms</summary>
 
-- Linear Regression
+- [k-Nearest Neighbors Regressor](./algorithms/neighbors/KNeighborsRegressor.py)
+- [k-Nearest Neighbors Classifier](./algorithms/neighbors/KNeighborsClassifier.py)
+- [Linear Regression](./algorithms/linear_model/LinearRegression.py)
+- [Logistic Regression](./algorithms/linear_model/LogisticRegression.py)
+- [Ridge Regression](./algorithms/linear_model/RidgeRegression.py)
+- [SGD Regression (Linear/Ridge/Lasso/Elasticnet)](./algorithms/linear_model/SGDRegressor.py)
+- [Linear Discriminant Analysis](./algorithms/discriminant_analysis/LinearDiscriminantAnalysis.py)
+- [Quadratic Discriminant Analysis](./algorithms/discriminant_analysis/QuadraticDiscriminantAnalysis.py)
+- [Gaussian Naive Bayes](./algorithms/naive_bayes/GaussianNB.py)
+- [Multinomial Naive Bayes](./algorithms/naive_bayes/MultinomialNB.py)
 
 </details>
 
 <details>
-<summary>Autograd Engine</summary>
+  <summary>Autograd Engine</summary>
 
-- [Tensor](./autograd/engine.py)
+- [Tensor](./autograd/engine.py) which supports the forward and backward propagations of the following operations:
+  - Addition (`__add__`, `__radd__`)
+  - Subtraction (`__sub__`, `__rsub__`)
+  - Multiplication (`__mul__`, `__rmul__`)
+  - Division (`__truediv__`)
+  - Power (`__pow__`, `square`)
+  - Negation (`__neg__`)
+  - Matrix multiplication (`__matmul__`)
+  - Relu (`ReLU`)
+  - Sigmoid (`sigmoid`)
+  - Tanh (`tanh`)
+  - Exponential (`exp`)
+  - Logarithm (`log`)
+  - Sum (`sum`)
+  - Mean (`mean`)
+  - Variance (`var`)
+  - Maximum (`max`)
+  - Minimum (`min`)
+  - Cosine (`cos`)
+  - Sine (`sin`)
+  - Greater Than (`__gt__`)
+  - Cumulative Distribution Function (`phi`)
+  - Split (`split`)
+  - Masked Fill (`masked_fill`)
+  - Softmax (`softmax`)
+  - Unsqueeze (`unsqueeze`)
+  - Squeeze (`squeeze`)
+  - Transpose (`transpose`)
+  - 2D Convolution (`conv2d`)
+  - Padding (`pad`)
+  - Flip (`flip`)
+  - Concatenate (`cat`)
+  - Clamp (`clamp`)
+  - One Hot Encoding (`one_hot`)
+  - Absolute (`abs`)
+  - Flatten (`flatten`)
+  - View (`view`)
+  - Get Item (`__getitem__`)
 
 </details>
 
@@ -83,8 +130,6 @@ This repository contains the following:
 -
 
 </details>
-
-## Code Examples
 
 ## Credits
 
