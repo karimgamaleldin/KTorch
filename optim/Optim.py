@@ -5,7 +5,7 @@ class Optim:
   '''
   The base optimizer class
   '''
-  def __init__(self, params):
+  def __init__(self, params: Tensor):
     '''
     Initialize the optimizer with the parameters
     '''
@@ -22,4 +22,4 @@ class Optim:
     Zero the gradients of the parameters
     '''
     for param in self.params:
-      param._zero_grad()
+      param.zero_grad()

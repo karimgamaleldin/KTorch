@@ -188,8 +188,16 @@ class Tensor:
   def sigmoid(self):
     '''
     Apply the sigmoid function to the tensor
+
+    This version is a stable version of the sigmoid function as:
+    - for x > 0, sigmoid(x) = 1 / (1 + exp(-x)) - for big negative values it is unstable
+    - for x < 0, sigmoid(x) = exp(x) / (1 + exp(x)) - for big positive values it is unstable
+
     '''
-    t = 1/(1+np.exp(-self.data))
+    pos_mask = self.data >= 0
+    t = np.zeros_like(self.data)
+    t[pos_mask] = 1/(1+np.exp(-self.data[pos_mask]))
+    t[~pos_mask] = np.exp(self.data[~pos_mask])/(1+np.exp(self.data[~pos_mask]))
     out = Tensor(t, _prev=(self,), _op='sigmoid', label=f"sigmoid({self.label})")
 
     def _backward():
@@ -295,18 +303,18 @@ class Tensor:
       self.data = self.data.reshape(1, -1)
     if other.data.ndim == 1:
       other.data = other.data.reshape(1, -1)
-    if self.data.shape[1] != other.data.shape[0]:
-      raise ValueError("The shapes of the tensors must be the same")
     t = np.matmul(self.data, other.data)
     out = Tensor(t, _prev=(self, other), _op='matmul', label=f"{self.label} @ {other.label}")
     def _backward():
       '''
-      self, self.grad - matrix of shape (n, m)
-      other, other.grad - tensor of shape (m, p)
+      self, self.grad - matrix of shape (..., n, m)
+      other, other.grad - tensor of shape (..., m, p)
       out, out.grad - tensor of shape (n, p)
       '''
-      self.grad += np.matmul(out.grad, other.data.T) # (n, p) * (p, m) = (n, m)
-      other.grad += np.matmul(self.data.T, out.grad) # (m, n) * (n, p) = (m, p)
+      other_t = np.swapaxes(other.data, -1, -2)
+      self.grad += np.matmul(out.grad, other_t) # (..., n, p) * (..., p, m) = (..., n, m)
+      self_t = np.swapaxes(self.data, -1, -2)
+      other.grad += np.matmul(self_t, out.grad) # (..., m, n) * (..., n, p) = (..., m, p)
     out._backward = _backward
     return out
   
@@ -521,7 +529,7 @@ class Tensor:
     out._backward = _backward
     return out
   
-  def softmax(self, axis):
+  def softmax(self, axis=None):
     '''
     Compute the softmax of the tensor
     '''
@@ -567,7 +575,7 @@ class Tensor:
     '''
     Transpose the tensor
     '''
-    t = np.transpose(self.data, (dim0, dim1))
+    t = np.swapaxes(self.data, dim0, dim1)
     out = Tensor(t, _prev=(self,), _op='transpose', label=f"transpose({self.label})")
     def _backward():
       self.grad += np.transpose(out.grad, (dim1, dim0))
@@ -679,10 +687,37 @@ class Tensor:
     '''
     Perform one hot encoding
     '''
-    t = np.eye(num_classes)[self.data]
+    t = np.eye(num_classes)[self.data.astype(np.int32).flatten()] # Flatten the tensor to prevent an extra dimension to appear
     out = Tensor(t, _prev=(self,), _op='one_hot', label=f"one_hot({self.label})")
     def _backward():
       self.grad += out.grad
 
     out._backward = _backward
     return out
+  
+  def abs(self):
+    '''
+    Compute the absolute value of the tensor
+    '''
+    t = np.abs(self.data)
+    out = Tensor(t, _prev=(self,), _op='abs', label=f"abs({self.label})")
+    def _backward():
+      self.grad += np.sign(self.data) * out.grad
+
+    out._backward = _backward
+    return out
+  
+  # def log_sigmoid(self):
+  #   '''
+  #   Compute the log sigmoid of the tensor
+  #   '''
+  #   max_val = np.clip(self.data, 0, None)
+  #   t = np.log1p(np.exp(-np.abs(self.data))) + max_val - self.data * (self.data < 0)
+  #   out = Tensor(t, _prev=(self,), _op='log_sigmoid', label=f"log_sigmoid({self.label})")
+  #   def _backward():
+  #     self.grad += (1 - np.exp(-np.abs(self.data))) ** -1 * out.grad
+
+  #   out._backward = _backward
+  #   return out
+
+    

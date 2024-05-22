@@ -19,3 +19,5 @@ from .MSELoss import MSELoss
 from .CrossEntropyLoss import CrossEntropyLoss
 from .BCELoss import BCELoss
 from .BCEWithLogitsLoss import BCEWithLogitsLoss
+from .MultiheadAttention import MultiheadAttention
+from .Sequential import Sequential

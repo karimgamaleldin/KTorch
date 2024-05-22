@@ -48,4 +48,4 @@ class SGD(Optim):
           g = self.prev_velocities[i]
       
       # Update the parameters
-      param.data -= self.lr * g
+      param.data = param.data - self.lr * g

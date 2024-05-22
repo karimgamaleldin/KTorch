@@ -152,3 +152,16 @@ def square(x: Tensor) -> Tensor:
   Compute the square of a tensor
   '''
   return x.square()
+
+def abs(x: Tensor) -> Tensor:
+  '''
+  Compute the absolute value of a tensor
+  '''
+  return x.abs()
+
+def exp(x: Tensor) -> Tensor:
+  '''
+  Compute the exponential of a tensor
+  '''
+  return x.exp()
+

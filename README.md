@@ -4,6 +4,13 @@
 
 KTorch is a dedicated repository for machine learning and deep learning algorithms. It contains handcrafted implementations of popular machine learning algorithms, neural networks' layers, autograd engine and much more.
 
+## Build Status
+- The project is currently in development
+- Implemented and Ready to use Machine Learning Algorithms, Neural Network layers and others can be found in the `Features & Algorithms` section
+- Transformers are being tested
+- CNNs are being tested
+- RNNs, LSTMs and GRU are under development
+
 ## Tech Stack
 
 <div align="center>
@@ -46,6 +53,7 @@ This repository contains the following:
 - Loss Functions
   - [Categorical Crossentropy](./nn/CrossEntropyLoss.py)
   - [Binary Crossentropy](./nn/BCELoss.py)
+  - [Binary Crossentropy](./nn/BCEWithLogitsLoss.py) - a numerically stable version that uses log-sum-exp trick
   - [Mean Squared Error](./nn/MSELoss.py)
   -
 

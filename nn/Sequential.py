@@ -1,5 +1,6 @@
+from core import KTorch
 from nn.Module import Module
-from autograd.engine import Tensor
+from autograd import Tensor
 
 class Sequential(Module):
   '''

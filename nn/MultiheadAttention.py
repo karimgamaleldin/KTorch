@@ -1,9 +1,8 @@
-import nn
 from core import KTorch
 from autograd.engine import Tensor
-from nn import Linear, LayerNorm, Dropout
+from nn import Linear, Dropout, Module
 
-class MultiheadAttention(nn.Module):
+class MultiheadAttention(Module):
   '''
   A class that represents a multihead attention layer in a neural network.
   '''
@@ -31,9 +30,11 @@ class MultiheadAttention(nn.Module):
     self.head_dim = embed_dim // num_heads
     assert self.embed_dim % self.num_heads == 0, "embed_dim must be divisible by num_heads"
 
-    self.q = Linear(embed_dim, embed_dim)
+    self.q = Linear(embed_dim, embed_dim, bias=bias)
     self.k = Linear(embed_dim, self.kdim, bias = self.add_bias_kv)
     self.v = Linear(embed_dim, self.vdim, bias = self.add_bias_kv)
+
+    self.out = Linear(embed_dim, embed_dim, bias=bias)
 
     
 
@@ -42,24 +43,31 @@ class MultiheadAttention(nn.Module):
     '''
     Forward pass of the multihead attention layer
     '''
-    q_matrix, k_matrix, v_matrix = self.q(query), self.k(key), self.v(value)
-    q_matrix = q_matrix.view(q_matrix.shape[0], q_matrix.shape[1], self.num_heads, self.head_dim).transpose(1, 2)
-    k_matrix = k_matrix.view(k_matrix.shape[0], k_matrix.shape[1], self.num_heads, self.head_dim).transpose(1, 2)
-    v_matrix = v_matrix.view(v_matrix.shape[0], v_matrix.shape[1], self.num_heads, self.head_dim)
-    attn_output: Tensor = KTorch.matmul(q_matrix, k_matrix.transpose(2, 3))
-    attn_output = attn_output / (self.head_dim ** 0.5)
+    batch_size = query.shape[0]
+    q_matrix, k_matrix, v_matrix = self.q(query), self.k(key), self.v(value) # Get the query, key, and value matrices
+    q_matrix = q_matrix.view(q_matrix.shape[0], q_matrix.shape[1], self.num_heads, self.head_dim).transpose(1, 2) # Reshape the query matrix
+    k_matrix = k_matrix.view(k_matrix.shape[0], k_matrix.shape[1], self.num_heads, self.head_dim).transpose(1, 2) # Reshape the key matrix
+    v_matrix = v_matrix.view(v_matrix.shape[0], v_matrix.shape[1], self.num_heads, self.head_dim).transpose(1, 2) # Reshape the value matrix
+
+    attn_scores: Tensor = KTorch.matmul(q_matrix, k_matrix.transpose(-2, -1)) # Compute the attention scores
+    attn_scores = attn_scores / (self.head_dim ** 0.5) # Scale the attention scores
+
+    # Masking
     if attn_mask is not None:
-      attn_output = attn_output.masked_fill(attn_mask, float('-inf'))
+      attn_scores = attn_scores.masked_fill(attn_mask, float('-inf'))
     if padding_mask is not None:
-      attn_output = attn_output.masked_fill(padding_mask.unsqueeze(1).unsqueeze(2), float('-inf'))
-    attn_output = KTorch.softmax(attn_output, dim=-1)
-    attn_output = self.dropout(attn_output)
-    attn_output = KTorch.matmul(attn_output, v_matrix)
-    attn_output = attn_output.transpose(1, 2).view(attn_output.shape[0], attn_output.shape[1], self.embed_dim)
-    return attn_output
+      attn_scores = attn_scores.masked_fill(padding_mask.unsqueeze(1).unsqueeze(2), float('-inf'))
+
+    attn_weights = KTorch.softmax(attn_scores, axis=-1) # Apply the softmax function
+    attn_weights, _ = self.dropout(attn_weights) # Apply dropout
+
+    attn_output = KTorch.matmul(attn_weights, v_matrix) 
+    attn_output = attn_output.transpose(1, 2).view(batch_size, -1, self.embed_dim) # Reshape the output
+    output = self.out(attn_output) # Apply the output linear layer, which combines the heads
+    return output
 
   def parameters(self):
     '''
     Return the parameters of the multihead attention layer
     '''
-    return self.qkv.parameters() + self.kv.parameters() + self.attn.parameters() if self.attn is not None else self.qkv.parameters() + self.kv.parameters()
+    return self.q.parameters() + self.k.parameters() + self.v.parameters() + self.out.parameters() + self.dropout.parameters()
