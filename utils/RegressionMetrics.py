@@ -126,3 +126,17 @@ def quantile_loss(y_true, y_pred, q=0.5):
   e = y_true - y_pred
   return np.mean(np.maximum(q * e, (q - 1) * e))
 
+
+def friedman_mse(y_true, y_pred):
+  '''
+  Friedman mean squared error
+
+  Parameters:
+    - y_true: Ground truth target values
+    - y_pred: Predicted target values
+
+  Returns:
+    - loss: Friedman mean squared error
+  '''
+  return np.mean((y_true - y_pred) ** 2) - np.mean(y_true - y_pred) ** 2
+

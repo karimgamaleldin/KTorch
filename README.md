@@ -12,7 +12,7 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
   - Transformers, Conv2D, Layer normalization, Batch normalization
   - Ensemble Models, PCA
 - Under Development:
-  - RNNs, LSTMs, and GRUs   
+  - RNNs, LSTMs, and GRUs
 
 ## Tech Stack
 
@@ -40,7 +40,9 @@ The following algorithms are implemented, tested, and used on different datasets
 - [Quadratic Discriminant Analysis](./algorithms/discriminant_analysis/QuadraticDiscriminantAnalysis.py)
 - [Gaussian Naive Bayes](./algorithms/naive_bayes/GaussianNB.py)
 - [Multinomial Naive Bayes](./algorithms/naive_bayes/MultinomialNB.py)
-
+- [Support Vector Classifier](./algorithms/svm/SVC.py)
+- [Decision Tree Regressor](./algorithms/tree/DecisionTreeRegressor.py)
+- [Decision Tree Classifier](./algorithms/tree/DecisionTreeClassifier.py)\_
 </details>
 
 <details>
@@ -91,6 +93,7 @@ The following algorithms are implemented, tested, and used on different datasets
 <summary>Neural network layers</summary>
 
 - [Linear Layer](./nn/Linear.py)
+- [Sequential](./nn/Sequential.py)
 - [Flatten](./nn/Flatten.py)
 - [Dropout](./nn/Dropout.py)
 - Activation Functions
@@ -104,7 +107,6 @@ The following algorithms are implemented, tested, and used on different datasets
   - [Binary Crossentropy](./nn/BCELoss.py)
   - [Binary Crossentropy](./nn/BCEWithLogitsLoss.py) - a numerically stable version that uses log-sum-exp trick
   - [Mean Squared Error](./nn/MSELoss.py)
-  -
 
 </details>
 
@@ -128,7 +130,6 @@ The following algorithms are implemented, tested, and used on different datasets
 
 <details>
 <summary>Utilites (Metrics and other stuff)</summary>
-
 
 </details>
 
