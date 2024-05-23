@@ -2,15 +2,17 @@
 
 ## Motivation
 
-KTorch is a dedicated repository for machine learning and deep learning algorithms. It contains handcrafted implementations of popular machine learning algorithms, neural networks' layers, autograd engine and much more.
+KTorch is a dedicated repository for machine learning and deep learning algorithms. It contains handcrafted implementations of popular machine learning algorithms, neural networks' layers, an autograd engine, and much more.
 
 ## Build Status
 
 - The project is currently in development
-- Implemented and Ready to use Machine Learning Algorithms, Neural Network layers and others can be found in the `Features & Algorithms` section
-- Transformers are being tested
-- CNNs are being tested
-- RNNs, LSTMs and GRU are under development
+- Implemented and Ready-to-use Machine Learning Algorithms, Neural Network layers, and others can be found in the `Features & Algorithms` section
+- Under Testing:
+  - Transformers, Conv2D, Layer normalization, Batch normalization
+  - Ensemble Models, PCA
+- Under Development:
+  - RNNs, LSTMs, and GRUs   
 
 ## Tech Stack
 
@@ -23,7 +25,7 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
 
 ## Features & Algorithms
 
-The following algorithms are implemented, tested and used on different datasets, which could be found in [Example Notebooks](./examples_notebooks/):
+The following algorithms are implemented, tested, and used on different datasets, which can be found in [Example Notebooks](./examples_notebooks/):
 
 <details>
 <summary>Machine learning algorithms</summary>
@@ -127,7 +129,6 @@ The following algorithms are implemented, tested and used on different datasets,
 <details>
 <summary>Utilites (Metrics and other stuff)</summary>
 
--
 
 </details>
 
@@ -137,6 +138,10 @@ This is a list of some of the sources that helped me in learning and making this
 
 1. [StatQuest with Josh Starmer](https://www.youtube.com/@statquest)
 2. [Serrano.Academy](https://www.youtube.com/@SerranoAcademy)
+3. [Dive into Deep Learning (d2l.ai)](https://d2l.ai/)
+4. [Introduction to Statistical Learning](https://www.statlearning.com/)
+5. The Elements of Statistical Learning
+6. [Pascal Poupart](https://www.youtube.com/results?search_query=pascal+poupart)
 
 ## License
 
