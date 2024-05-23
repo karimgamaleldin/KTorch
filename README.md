@@ -42,7 +42,7 @@ The following algorithms are implemented, tested, and used on different datasets
 - [Multinomial Naive Bayes](./algorithms/naive_bayes/MultinomialNB.py)
 - [Support Vector Classifier](./algorithms/svm/SVC.py)
 - [Decision Tree Regressor](./algorithms/tree/DecisionTreeRegressor.py)
-- [Decision Tree Classifier](./algorithms/tree/DecisionTreeClassifier.py)\_
+- [Decision Tree Classifier](./algorithms/tree/DecisionTreeClassifier.py)
 </details>
 
 <details>
@@ -102,6 +102,7 @@ The following algorithms are implemented, tested, and used on different datasets
   - [Softmax](./nn/Softmax.py)
   - [ReLU](./nn/ReLU.py)
   - [GELU](./nn/GELU.py)
+  - [GRU](./nn/GLU.py)
 - Loss Functions
   - [Categorical Crossentropy](./nn/CrossEntropyLoss.py)
   - [Binary Crossentropy](./nn/BCELoss.py)

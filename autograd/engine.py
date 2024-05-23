@@ -296,7 +296,11 @@ class Tensor:
     dfs(self)
     self.grad = np.ones_like(self.data)
     for node in reversed(topo):
-      node._backward()
+      if isinstance(node, Tensor):
+        node._backward()
+      elif isinstance(node, [tuple, list]):
+        for n in node:
+          n._backward()
   
   def __matmul__(self, other):
     '''
@@ -507,17 +511,23 @@ class Tensor:
     out._backward = _backward
     return out
   
-  def split(self, split_size, dim=-1):
+  def split(self, num_splits, dim=-1):
     '''
     Split the tensor
     '''
-    t = np.split(self.data, split_size, axis=dim)
+    assert self.data.shape[dim] % num_splits == 0, "The dimension to split must be divisible by the number of splits"
+    t = np.split(self.data, num_splits, axis=dim)
     out = [Tensor(x, _prev=(self,), _op='split', label=f"split({self.label})") for x in t]
-    def _backward():
-      for x in out:
-        self.grad += x.grad
 
-    out._backward = _backward
+    for i, o in enumerate(out):
+      def _backward():
+        slices = [slice(None)] * self.data.ndim
+        start = i * o.shape[dim]
+        end = (i + 1) * o.shape[dim]
+        slices[dim] = slice(start, end)
+        self.grad[tuple(slices)] += o.grad
+
+      o._backward = _backward
     return out
   
   def masked_fill(self, mask, value):

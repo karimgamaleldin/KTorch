@@ -20,8 +20,7 @@ class GLU(Module):
 
   def forward(self, x:Tensor) -> Tensor:
     assert x.shape[self.dim] % 2 == 0, "The input tensor must have an even number of dimensions along the specified dimension."
-    div = x.shape[self.dim] // 2
-    a, b = x.split(div, dim=self.dim)
+    a, b = x.split(2, dim=self.dim)
     return a * KTorch.sigmoid(b)
 
   def parameters(self):
