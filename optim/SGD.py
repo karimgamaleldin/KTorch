@@ -35,7 +35,7 @@ class SGD(Optim):
       g = param.grad
       # Apply weight decay
       if self.weight_decay != 0:
-        g += self.weight_decay * param.data
+        g += self.weight_decay * param.data # L2 penalty
         
       # Apply momentum
       if self.momentum != 0:
@@ -43,7 +43,7 @@ class SGD(Optim):
 
         # Apply Nesterov momentum
         if self.nesterov:
-          g += self.momentum * self.prev_velocities[i]
+          g += self.momentum * self.prev_velocities[i] # Adds the future velocity to the gradient so that it provide the look ahead effect.
         else: 
           g = self.prev_velocities[i]
       

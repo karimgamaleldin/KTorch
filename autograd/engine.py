@@ -243,16 +243,20 @@ class Tensor:
     return out
   
   def log(self):
-    '''
-    Apply the logarithm function to the tensor
-    '''
-    t = np.log(self.data)
-    out = Tensor(t, _prev=(self,), _op='log', label=f"log({self.label})")
-    def _backward():
-      self.grad += out.grad * 1 / self.data
-
-    out._backward = _backward
-    return out
+      '''
+      Apply the logarithm function to the tensor
+      '''
+      # Prevent log(0) and handle very small values to avoid overflow in division
+      epsilon = 1e-10
+      safe_data = np.where(self.data <= 0, epsilon, self.data)
+      t = np.log(safe_data)
+      out = Tensor(t, _prev=(self,), _op='log', label=f"log({self.label})")
+      
+      def _backward():
+          self.grad += out.grad * (1 / safe_data)
+      
+      out._backward = _backward
+      return out
   
   def sum(self, axis=None, keepdims=False):
     '''
@@ -361,7 +365,7 @@ class Tensor:
     t = np.mean(self.data, axis=axis, keepdims=keepdims)
     out = Tensor(t, _prev=(self,), _op='mean', label=f"mean({self.label})")
     def _backward():
-      self.grad += np.ones_like(self.data) * out.grad / self.data.size
+      self.grad += np.ones_like(self.data) * out.grad / np.prod(self.data.shape)
 
     out._backward = _backward
     return out

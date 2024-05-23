@@ -109,11 +109,11 @@ The following algorithms are implemented, tested and used on different datasets,
 <details>
 <summary>Optimizers</summary>
 
-- [Stochastic Gradient Descent](./optim/SGD.py)
-- [RMSProp](./optim/RMSProp.py)
+- [Stochastic Gradient Descent / SGD with Momentum / SGD with Nestrov Momentum](./optim/SGD.py)
+- [RMSProp / Centered RMSProp](./optim/RMSProp.py)
 - [AdaDelta](./optim/Adadelta.py)
 - [Adagrad](./optim/Adagrad.py)
-- [Adam](./optim/Adam.py)
+- [Adam / AMSGrad](./optim/Adam.py)
 
 </details>
 

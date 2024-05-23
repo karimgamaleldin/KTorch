@@ -19,25 +19,31 @@ class Adagrad(Optim):
     '''
     super().__init__(params)
     self.lr = lr
+    self.initial_lr = lr
     self.lr_decay = lr_decay
     self.weight_decay = weight_decay
     self.eps = eps
     self.accumulator_value = [np.full_like(param.data, initial_accumulator_value) for param in self.params]
+    self.step_count = 0
 
-  
   def step(self):
     '''
     Update the parameters using the gradients
     '''
+    self.step_count += 1
+
+    if self.lr_decay != 0:
+      self.lr = self.initial_lr / (1 + self.lr_decay * self.step_count)
+
     for i, param in enumerate(self.params):
       # Temp value for the gradient, to not change the original gradient
       g = param.grad
       # add the weight decay
       if self.weight_decay != 0:
-        g += self.weight_decay * param.data
+        g += self.weight_decay * param.data # L2 penalty
       # update the accumulator value
       self.accumulator_value[i] += g**2
       # update the parameters
       param.data -= self.lr * g / (np.sqrt(self.accumulator_value[i]) + self.eps)
     # update the learning rate
-      self.lr *= 1 / (1 + self.lr_decay)
+

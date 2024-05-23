@@ -31,14 +31,14 @@ class Adam(Optim):
     self.v = [np.zeros_like(param.data) for param in self.params]
     self.s = [np.zeros_like(param.data) for param in self.params] 
     self.s_max = [np.zeros_like(param.data) for param in self.params] # maximum of the v
-    self.t = 1
+    self.t = 0
 
 
   def step(self):
     '''
     Update the parameters of the model
     '''
-
+    self.t += 1
     for i, param in enumerate(self.params):
       # Temporary variable to store the gradient
       g = param.grad
@@ -59,4 +59,3 @@ class Adam(Optim):
         param.data -= self.lr * (v_hat / (np.sqrt(self.s_max[i]) + self.eps))
       else:
         param.data -= self.lr * (v_hat / (np.sqrt(s_hat) + self.eps))
-    self.t += 1

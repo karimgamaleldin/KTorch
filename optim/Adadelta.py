@@ -40,10 +40,10 @@ class Adadelta(Optim):
       # Update the accumulator value
       self.accumulator_value[i] = self.rho * self.accumulator_value[i] + (1 - self.rho) * grad ** 2
       # Compute the RMS
-      rms_gt = np.sqrt(self.accumulator_value[i] + self.eps)
+      rms_grad = np.sqrt(self.accumulator_value[i] + self.eps)
       rms_delta_x = np.sqrt(self.delta_accumulator[i] + self.eps)
       # calculate delta x
-      delta_x = (rms_delta_x / rms_gt) * grad
+      delta_x = (rms_delta_x / rms_grad) * grad
       # update the delta accumulator
       self.delta_accumulator[i] = self.rho * self.delta_accumulator[i] + (1 - self.rho) * delta_x ** 2
       # update the parameter
