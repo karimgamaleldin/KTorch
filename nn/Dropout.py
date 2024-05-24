@@ -27,7 +27,7 @@ class Dropout(Module):
       out = x * mask * (1.0 / (1.0 - self.p)) # scale the output by 1/(1-p) to maintain the expected value
     else:
       out = x
-    return out, mask
+    return out
 
   def parameters(self):
     '''

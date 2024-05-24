@@ -31,6 +31,12 @@ def zeros(shape) -> Tensor:
   '''
   return Tensor(np.zeros(shape))
 
+def zeros_like(x: Tensor) -> Tensor:
+  '''
+  Create a tensor of zeros with the same shape as another tensor
+  '''
+  return Tensor(np.zeros_like(x.data))
+
 def ones(shape) -> Tensor:
   '''
   Create a tensor of ones
