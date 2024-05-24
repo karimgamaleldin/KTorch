@@ -306,7 +306,6 @@ class Tensor:
     '''
     Compute the matrix multiplication of 2 tensors
     '''
-    
     if self.data.ndim == 1:
       self.data = self.data.reshape(1, -1)
     if other.data.ndim == 1:

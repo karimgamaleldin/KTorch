@@ -8,6 +8,10 @@ from .Linear import Linear
 from .RNNBase import RNNBase
 from .RNNCell import RNNCell
 from .RNN import RNN
+from .LSTMCell import LSTMCell
+from .LSTM import LSTM
+from .GRUCell import GRUCell
+from .GRU import GRU
 from .BatchNorm1D import BatchNorm1D
 from .BatchNorm2D import BatchNorm2D
 from .BatchNorm3D import BatchNorm3D

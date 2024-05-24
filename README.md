@@ -93,6 +93,8 @@ The following algorithms are implemented, tested, and used on different datasets
 <summary>Neural network layers</summary>
 
 - [Linear Layer](./nn/Linear.py)
+- [RNNCell](./nn/RNNCell.py) - A single RNN unit with tanh or ReLU non-linearity
+- [RNN / Bidirectional RNN](./nn/RNN.py) - A multi-layer RNN using the RNNCell class
 - [Sequential](./nn/Sequential.py)
 - [Flatten](./nn/Flatten.py)
 - [Dropout](./nn/Dropout.py)
@@ -114,7 +116,7 @@ The following algorithms are implemented, tested, and used on different datasets
 <details>
 <summary>Optimizers</summary>
 
-- [Stochastic Gradient Descent / SGD with Momentum / SGD with Nestrov Momentum](./optim/SGD.py)
+- [Stochastic Gradient Descent / SGD with Momentum / SGD with Nestrov Momentum (NAG)](./optim/SGD.py)
 - [RMSProp / Centered RMSProp](./optim/RMSProp.py)
 - [AdaDelta](./optim/Adadelta.py)
 - [Adagrad](./optim/Adagrad.py)
