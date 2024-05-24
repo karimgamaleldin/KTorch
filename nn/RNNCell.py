@@ -30,17 +30,19 @@ class RNNCell(Module):
     self.b_hh = simpleUniformInitialization((hidden_size,1)).squeeze(-1) if bias else None
     assert nonlinearity in ['tanh', 'relu'], 'Nonlinearity must be either tanh or relu'
     self.activation_function = Tanh() if nonlinearity == 'tanh' else ReLU()
-    self.hidden = None
     
   def forward(self, x: Tensor, hidden: Tensor) -> Tensor:
     '''
     Perform the forward pass of the RNN cell
+
+    Parameters:
+      x (Tensor): The input tensor
+      hidden (Tensor): The hidden state
     '''
     term_1 = KTorch.matmul(x, self.w_ih) + (self.b_ih if self.bias else 0)
     term_2 = KTorch.matmul(hidden, self.w_hh) + (self.b_hh if self.bias else 0)
-    out = self.activation_function(term_1 + term_2)
-    self.hidden = out
-    return out
+    new_h = self.activation_function(term_1 + term_2)
+    return new_h
 
   def parameters(self):
     '''

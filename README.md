@@ -11,8 +11,6 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
 - Under Testing:
   - Transformers, Conv2D, Layer normalization, Batch normalization
   - Ensemble Models, PCA
-- Under Development:
-  - RNNs, LSTMs, and GRUs
 
 ## Tech Stack
 
@@ -95,6 +93,10 @@ The following algorithms are implemented, tested, and used on different datasets
 - [Linear Layer](./nn/Linear.py)
 - [RNNCell](./nn/RNNCell.py) - A single RNN unit with tanh or ReLU non-linearity
 - [RNN / Bidirectional RNN](./nn/RNN.py) - A multi-layer RNN using the RNNCell class
+- [GRUCell](./nn/GRUCell.py) - A single Gated Recurrent Unit cell
+- [GRU / Bidirectional GRU](./nn/GRU.py) - A multi-layer GRU using the GRUCell class
+- [LSTMCell](./nn/LSTMCell.py) - A long short term memory cell
+- [LSTM](./nn/LSTM.py) - A multi-layer LSTM using the LSTM cell
 - [Sequential](./nn/Sequential.py)
 - [Flatten](./nn/Flatten.py)
 - [Dropout](./nn/Dropout.py)
@@ -110,6 +112,9 @@ The following algorithms are implemented, tested, and used on different datasets
   - [Binary Crossentropy](./nn/BCELoss.py)
   - [Binary Crossentropy](./nn/BCEWithLogitsLoss.py) - a numerically stable version that uses log-sum-exp trick
   - [Mean Squared Error](./nn/MSELoss.py)
+- Interfaces
+  - [Module](./nn/Module.py) - Parent class of all neural network layers
+  - [RNN Base](./nn/RNNBase.py) - Parent class for recurrent layers, such as: RNN, LSTM and GRU.
 
 </details>
 

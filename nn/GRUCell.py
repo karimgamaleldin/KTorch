@@ -20,36 +20,51 @@ class GRUCell(Module):
     self.bias = bias
 
     # Initialize the weight matrices
-    self.w_ir = simpleUniformInitialization((hidden_size, input_size)).transpose(0, 1) # to avoid transposing each time in the forward pass
-    self.w_iz = simpleUniformInitialization((hidden_size, input_size)).transpose(0, 1)
-    self.w_in = simpleUniformInitialization((hidden_size, input_size)).transpose(0, 1)
+    self.w_ir = simpleUniformInitialization((input_size, hidden_size)) 
+    self.w_iz = simpleUniformInitialization((input_size, hidden_size)) 
+    self.w_in = simpleUniformInitialization((input_size, hidden_size)) 
     self.w_hr = simpleUniformInitialization((hidden_size, hidden_size))
     self.w_hz = simpleUniformInitialization((hidden_size, hidden_size))
     self.w_hn = simpleUniformInitialization((hidden_size, hidden_size))
 
     # Initialize the biases
     if bias:
-      self.b_ir = simpleUniformInitialization((1, hidden_size)).transpose(0, 1)
-      self.b_iz = simpleUniformInitialization((1, hidden_size)).transpose(0, 1)
-      self.b_in = simpleUniformInitialization((1, hidden_size)).transpose(0, 1)
-      self.b_hr = simpleUniformInitialization((1, hidden_size)).transpose(0, 1)
-      self.b_hz = simpleUniformInitialization((1, hidden_size)).transpose(0, 1)
-      self.b_hn = simpleUniformInitialization((1, hidden_size)).transpose(0, 1)
+      self.b_ir = simpleUniformInitialization((hidden_size, 1)).squeeze(-1)
+      self.b_iz = simpleUniformInitialization((hidden_size, 1)).squeeze(-1)
+      self.b_in = simpleUniformInitialization((hidden_size, 1)).squeeze(-1)
+      self.b_hr = simpleUniformInitialization((hidden_size, 1)).squeeze(-1)
+      self.b_hz = simpleUniformInitialization((hidden_size, 1)).squeeze(-1)
+      self.b_hn = simpleUniformInitialization((hidden_size, 1)).squeeze(-1)
 
   def forward(self, x: Tensor, h: Tensor) -> Tensor:
     '''
     Forward pass
+
+    Parameters:
+      x (Tensor): The input tensor
+      h (Tensor): The hidden state
     '''
-    r = KTorch.matmul(x, self.w_ir) + KTorch.matmul(h, self.w_hr) + self.b_ir + self.b_hr if self.bias else KTorch.matmul(x, self.w_ir) + KTorch.matmul(h, self.w_hr)
-    r = r.sigmoid()
-    z = KTorch.matmul(x, self.w_iz) + KTorch.matmul(h, self.w_hz) + self.b_iz + self.b_hz if self.bias else KTorch.matmul(x, self.w_iz) + KTorch.matmul(h, self.w_hz)
-    z = z.sigmoid()
-    n = KTorch.matmul(x, self.w_in) + r * (KTorch.matmul(h, self.w_hn) + self.b_hn) + self.b_in if self.bias else KTorch.matmul(x, self.w_in) + r * KTorch.matmul(h, self.w_hn)
-    n = n.tanh()
-    h = (1 - z) * n + z * h
-    return h
+    # Compute the reset gate
+    reset_gate = KTorch.matmul(x, self.w_ir) + (self.b_ir if self.bias else 0)
+    reset_gate += KTorch.matmul(h, self.w_hr) + (self.b_hr if self.bias else 0)
+    reset_gate = reset_gate.sigmoid()
+
+    # Compute the update gate
+    update_gate = KTorch.matmul(x, self.w_iz) + (self.b_iz if self.bias else 0)
+    update_gate += KTorch.matmul(h, self.w_hz) + (self.b_hz if self.bias else 0)
+    update_gate = update_gate.sigmoid()
+
+    # Compute the new memory content
+    new_memory_content = KTorch.matmul(x, self.w_in) + (self.b_in if self.bias else 0)
+    new_memory_content += reset_gate * (KTorch.matmul(h, self.w_hn) + (self.b_hn if self.bias else 0))
+    new_memory_content = new_memory_content.tanh()
+
+    # Compute the new hidden state
+    new_h = (1 - update_gate) * h + update_gate * new_memory_content
+    return new_h
   
   def parameters(self):
+    out = [self.w_ir, self.w_iz, self.w_in, self.w_hr, self.w_hz, self.w_hn]
     if self.bias:
-      return [self.w_ir, self.w_iz, self.w_in, self.w_hr, self.w_hz, self.w_hn, self.b_ir, self.b_iz, self.b_in, self.b_hr, self.b_hz, self.b_hn]
-    return [self.w_ir, self.w_iz, self.w_in, self.w_hr, self.w_hz, self.w_hn]
+      out.extend([self.b_ir, self.b_iz, self.b_in, self.b_hr, self.b_hz, self.b_hn])
+    return out
