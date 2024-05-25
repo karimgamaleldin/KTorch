@@ -20,6 +20,7 @@ from .Embedding import Embedding
 from .Softmax import Softmax
 from .Flatten import Flatten
 from .MSELoss import MSELoss
+from .NLLLoss import NLLLoss
 from .CrossEntropyLoss import CrossEntropyLoss
 from .BCELoss import BCELoss
 from .BCEWithLogitsLoss import BCEWithLogitsLoss

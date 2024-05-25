@@ -1,11 +1,11 @@
-from core import KTorch
+from core import KTorch 
 from nn.Module import Module
 from autograd import Tensor
 
 class CrossEntropyLoss(Module):
   '''
-  CrossEntropyLoss
-
+  CrossEntropy
+  
   A class that represents the cross entropy loss
   '''
 
@@ -14,7 +14,6 @@ class CrossEntropyLoss(Module):
     Initialize the cross entropy loss
 
     reduction: str - The reduction method
-    label_smoothing: float - The label smoothing value, prevents overfitting by adding noise to the labels
     '''
     super().__init__()
     assert reduction in ['mean', 'sum'], "reduction must be either 'mean' or 'sum'"
@@ -25,19 +24,17 @@ class CrossEntropyLoss(Module):
     '''
     Forward pass
 
-    y_pred: Tensor - The predicted values, the input should be unnormalized logits
-    y_true: Tensor - The true values, the input should be the class labels
+    y_pred: Tensor - The predicted values (logits)
+    y_true: Tensor - The true values (class labels)
     '''
-    # Compute the softmax
-    y_pred = KTorch.softmax(y_pred, axis=-1)
 
-    # Compute the one hot encoding
+    # one hot encoding
     num_classes = y_pred.shape[-1]
     y_true_one = KTorch.one_hot(y_true, num_classes)
 
-    # Apply label smoothing if necessary
+    # label smoothing
     if self.label_smoothing > 0:
-      y_true_one = y_true_one * (1 - self.label_smoothing) + self.label_smoothing / num_classes # Takes a part of the true label and adds a part of the uniform distribution.
+      y_true_one = y_true_one * (1 - self.label_smoothing) + self.label_smoothing / num_classes
       '''
       Label smoothing is a regularization technique that prevents the model from becoming too confident in its predictions.
 
@@ -48,18 +45,20 @@ class CrossEntropyLoss(Module):
       - Improves calibration
       - Reduce sensitivity to class imbalance
       ''' 
+    
+    # Calculate the log probabilities
+    max_logit = KTorch.max(y_pred, axis=-1, keepdims=True)
+    logits = y_pred - max_logit
+    log_sum_exp = KTorch.log(KTorch.sum(KTorch.exp(logits), axis=-1, keepdims=True))
+    log_probs = logits - log_sum_exp
+    loss = -1 * KTorch.sum(y_true_one * log_probs, axis=-1)
 
-    # Compute the cross entropy loss
-    loss = -y_true_one * KTorch.log(y_pred)
-
-    # Compute the reduction
+    # Reduction
     if self.reduction == 'mean':
       return KTorch.mean(loss)
-    elif self.reduction == 'sum':
+    else:
       return KTorch.sum(loss)
 
   def parameters(self):
-    '''
-    Return the parameters
-    '''
     return []
+    

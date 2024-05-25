@@ -44,7 +44,14 @@ class Tensor:
     compatible = (self_shape == other_shape) | (self_shape == 1) | (other_shape == 1)
 
     return compatible.all()
+  
 
+  def __len__(self):
+    '''
+    Get the length of the tensor
+    '''
+    return len(self.data)
+  
 
   def __add__(self, other):
     '''
@@ -720,17 +727,28 @@ class Tensor:
     out._backward = _backward
     return out
   
-  # def log_sigmoid(self):
-  #   '''
-  #   Compute the log sigmoid of the tensor
-  #   '''
-  #   max_val = np.clip(self.data, 0, None)
-  #   t = np.log1p(np.exp(-np.abs(self.data))) + max_val - self.data * (self.data < 0)
-  #   out = Tensor(t, _prev=(self,), _op='log_sigmoid', label=f"log_sigmoid({self.label})")
-  #   def _backward():
-  #     self.grad += (1 - np.exp(-np.abs(self.data))) ** -1 * out.grad
 
-  #   out._backward = _backward
-  #   return out
+  def detach(self):
+    '''
+    Detach the tensor
+    '''
+    out = Tensor(self.data, _prev=(), _op='detach', label=f"detach({self.label})")
 
-    
+    def _backward():
+      pass
+
+    out._backward = _backward
+    return out
+  
+
+  def maximum(self, value:float):
+    '''
+    Compute the maximum of the tensor and a value
+    '''
+    t = np.maximum(self.data, value)
+    out = Tensor(t, _prev=(self,), _op='maximum', label=f"maximum({self.label}, {value})")
+    def _backward():
+      self.grad += (self.data >= value) * out.grad
+
+    out._backward = _backward
+    return out

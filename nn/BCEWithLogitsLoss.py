@@ -8,13 +8,18 @@ from nn.Sigmoid import Sigmoid
 class BCEWithLogitsLoss(Module):
     def __init__(self, reduction: str = 'mean'):
         super().__init__()
+        assert reduction in ['mean', 'sum'], 'reduction must be either mean or sum'
         self.reduction = reduction
 
     def forward(self, logits: Tensor, y_true: Tensor) -> Tensor:
-        t_n = KTorch.clamp(-logits, 0, float('inf')) # To avoid taking exponential of positive numbers
+        max_val = KTorch.maximum(logits, 0)
+        log_exp = KTorch.log(1 + KTorch.exp(-KTorch.abs(logits)))
+        bce = max_val + log_exp - logits * y_true 
 
-        log_1_plus_exp_neg_abs = KTorch.log(1 + KTorch.exp(-KTorch.abs(-t_n - logits))) + t_n
-
+        if self.reduction == 'mean':
+            return KTorch.mean(bce)
+        else:
+            return KTorch.sum(bce)
     
     def parameters(self):
         return self.bce.parameters() + self.sigmoid.parameters()

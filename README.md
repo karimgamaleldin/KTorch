@@ -108,7 +108,8 @@ The following algorithms are implemented, tested, and used on different datasets
   - [GELU](./nn/GELU.py)
   - [GLU](./nn/GLU.py)
 - Loss Functions
-  - [Categorical Crossentropy](./nn/CrossEntropyLoss.py)
+  - [NLLLoss](./nn/NLLLoss.py) - negative log liklihood loss
+  - [Crossentropy](./nn/CrossEntropyLoss.py) - a more stable version of nll that uses log-sum-exp trick
   - [Binary Crossentropy](./nn/BCELoss.py)
   - [Binary Crossentropy](./nn/BCEWithLogitsLoss.py) - a numerically stable version that uses log-sum-exp trick
   - [Mean Squared Error](./nn/MSELoss.py)

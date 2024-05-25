@@ -171,3 +171,14 @@ def exp(x: Tensor) -> Tensor:
   '''
   return x.exp()
 
+def maximum(x: Tensor, y: float) -> Tensor:
+  '''
+  Compute the element-wise maximum of two tensors
+  '''
+  return x.maximum(y)
+
+def max(x: Tensor, axis=None, keepdims=False) -> Tensor:
+  '''
+  Compute the maximum of a tensor
+  '''
+  return x.max(axis=axis, keepdims=keepdims)
