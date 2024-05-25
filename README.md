@@ -2,8 +2,7 @@
 
 ## Motivation
 
-KTorch is a dedicated repository for machine learning and deep learning algorithms. It contains handcrafted implementations of popular machine learning algorithms, neural networks' layers, an autograd engine, and much more.
-
+KTorch is a dedicated repository for machine learning and deep learning algorithms. It contains implementations of popular machine learning algorithms, neural network layers, an autograd engine, and much more, all built using object-oriented programming (OOP) principles.
 ## Build Status
 
 - The project is currently in development
