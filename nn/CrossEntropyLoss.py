@@ -6,7 +6,7 @@ class CrossEntropyLoss(Module):
   '''
   CrossEntropy
   
-  A class that represents the cross entropy loss
+  A class that represents the cross entropy loss, which uses the log-exp-sum trick to avoid numerical instability.
   '''
 
   def __init__(self, reduction: str = 'mean', label_smoothing: float = 0.0):

@@ -27,3 +27,5 @@ from .BCEWithLogitsLoss import BCEWithLogitsLoss
 from .MultiheadAttention import MultiheadAttention
 from .Sequential import Sequential
 from .GLU import GLU
+from .MaxPool2d import MaxPool2d
+from .AvgPool2d import AvgPool2d

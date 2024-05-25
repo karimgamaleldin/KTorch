@@ -603,43 +603,43 @@ class Tensor:
     out._backward = _backward
     return out
   
-  def conv2d(self, weight, stride=1, padding=0):
+  def conv2d(self, weight, stride=1):
     '''
     Perform the 2D convolution operation
     '''
-    N, C, H, W = self.data.shape # N - batch size, C - number of channels, H - height, W - width
-    F, _, Kh, Kw = weight.data.shape # F - number of filters, Kh - kernel height, Kw - kernel width
-    H_out = (H + 2 * padding - Kh) // stride + 1
-    W_out = (W + 2 * padding - Kw) // stride + 1
+    N, C, H, W = self.data.shape  # N - batch size, C - number of channels, H - height, W - width
+    F, _, Kh, Kw = weight.data.shape  # F - number of filters, Kh - kernel height, Kw - kernel width
+    H_out = (H - Kh) // stride + 1 # Padding is implicit as the input is already padded
+    W_out = (W - Kw) // stride + 1 # Padding is implicit as the input is already padded
     t = np.zeros((N, F, H_out, W_out))
-
+    # print(self.data.shape, weight.data.shape)
     for i in range(H_out):
-      for j in range(W_out):
-        h_start = i * stride
-        h_end = h_start + Kh
-        w_start = j * stride
-        w_end = w_start + Kw
-        x_slice = self.data[:, :, h_start:h_end, w_start:w_end]
-        for f in range(F):
-          t[:, f, i, j] = np.sum(x_slice * weight.data[f], axis=(1, 2, 3))
+        for j in range(W_out):
+            h_start = i * stride
+            h_end = h_start + Kh
+            w_start = j * stride
+            w_end = w_start + Kw
+            x_slice = self.data[:, :, h_start:h_end, w_start:w_end]
+            for f in range(F):
+                # print(x_slice.shape, weight.data[f].shape)
+                t[:, f, i, j] = np.sum(x_slice * weight.data[f], axis=(1, 2, 3))
 
     out = Tensor(t, _prev=(self, weight), _op='conv2d', label=f"conv2d({self.label}, {weight.label})")
 
     def _backward():
-      for i in range(H_out):
-        for j in range(W_out):
-          h_start = i * stride
-          h_end = h_start + Kh
-          w_start = j * stride
-          w_end = w_start + Kw
-          inp_region = self.data[:, :, h_start:h_end, w_start:w_end]
-          for f in range(F):
-            weight.grad[f] += np.sum(inp_region * out.grad[:, f, i, j][:, None, None, None], axis=0) # Get the gradient of the weight for the current filter for all elements in the batch
-            self.grad[:, :, h_start:h_end, w_start:w_end] += weight.data[f] * out.grad[:, f, i, j][:, None, None, None] # Get the gradient of the input for the current filter for all elements in the batch
+        for i in range(H_out):
+            for j in range(W_out):
+                h_start = i * stride
+                h_end = h_start + Kh
+                w_start = j * stride
+                w_end = w_start + Kw
+                inp_region = self.data[:, :, h_start:h_end, w_start:w_end]
+                for f in range(F):
+                    weight.grad[f] += np.sum(inp_region * out.grad[:, f, i, j][:, None, None, None], axis=0)  # Get the gradient of the weight for the current filter for all elements in the batch
+                    self.grad[:, :, h_start:h_end, w_start:w_end] += weight.data[f] * out.grad[:, f, i, j][:, None, None, None]  # Get the gradient of the input for the current filter for all elements in the batch
 
     out._backward = _backward
     return out
-        
   
   def pad(self, pad_width, mode='zeros'):
     '''
@@ -656,7 +656,73 @@ class Tensor:
 
     out = Tensor(t, _prev=(self,), _op='pad', label=f"pad({self.label})")
     def _backward():
-      self.grad += out.grad
+      self.grad += out.grad[tuple([slice(p[0], -p[1] if p[1] != 0 else None) for p in pad_width])]
+
+    out._backward = _backward
+    return out
+  
+  def max_pool2d(self, kernel_size, stride):
+    '''
+    Perform the 2D max pooling operation
+    '''
+    N, C, H, W = self.data.shape # N - batch size, C - number of channels, H - height, W - width
+    Kh, Kw = kernel_size, kernel_size # Kh - kernel height, Kw - kernel width
+    H_out = (H - Kh) // stride + 1
+    W_out = (W - Kw) // stride + 1
+    t = np.zeros((N, C, H_out, W_out)) # Initialize the output tensor
+
+    for i in range(H_out):
+        for j in range(W_out):
+            h_start = i * stride
+            h_end = h_start + Kh
+            w_start = j * stride
+            w_end = w_start + Kw
+            x_slice = self.data[:, :, h_start:h_end, w_start:w_end]
+            t[:, :, i, j] = np.max(x_slice, axis=(2, 3))
+    out = Tensor(t, _prev=(self,), _op='max_pool2d', label=f"max_pool2d({self.label})")
+    
+    def _backward():
+        for i in range(H_out):
+            for j in range(W_out):
+                h_start = i * stride
+                h_end = h_start + Kh
+                w_start = j * stride
+                w_end = w_start + Kw
+                x_slice = self.data[:, :, h_start:h_end, w_start:w_end]
+                mask = x_slice == np.max(x_slice, axis=(2, 3), keepdims=True)
+                self.grad[:, :, h_start:h_end, w_start:w_end] += mask * out.grad[:, :, i, j][:, :, None, None]
+
+    out._backward = _backward
+    return out
+  
+
+  def avg_pool2d(self, kernel_size, stride):
+    '''
+    Perform the 2D average pooling operation
+    '''
+    N, C, H, W = self.data.shape
+    Kh, Kw = kernel_size, kernel_size
+    H_out = (H - Kh) // stride + 1
+    W_out = (W - Kw) // stride + 1
+    t = np.zeros((N, C, H_out, W_out))
+    for i in range(H_out):
+        for j in range(W_out):
+            h_start = i * stride
+            h_end = h_start + Kh
+            w_start = j * stride
+            w_end = w_start + Kw
+            x_slice = self.data[:, :, h_start:h_end, w_start:w_end]
+            t[:, :, i, j] = np.mean(x_slice, axis=(2, 3))
+    out = Tensor(t, _prev=(self,), _op='avg_pool2d', label=f"avg_pool2d({self.label})")
+
+    def _backward():
+        for i in range(H_out):
+            for j in range(W_out):
+                h_start = i * stride
+                h_end = h_start + Kh
+                w_start = j * stride
+                w_end = w_start + Kw
+                self.grad[:, :, h_start:h_end, w_start:w_end] += out.grad[:, :, i, j][:, :, None, None] / (Kh * Kw)
 
     out._backward = _backward
     return out

@@ -91,6 +91,9 @@ The following algorithms are implemented, tested, and used on different datasets
 <summary>Neural network layers</summary>
 
 - [Linear Layer](./nn/Linear.py)
+- [Conv2d](./nn/Conv2d.py) - A 2D Convolutional layer
+- [MaxPool2d](./nn/MaxPool2d.py)
+- [AvgPool2d](./nn/AvgPool2d.py)
 - [RNNCell](./nn/RNNCell.py) - A single RNN unit with tanh or ReLU non-linearity
 - [RNN / Bidirectional RNN](./nn/RNN.py) - A multi-layer RNN using the RNNCell class
 - [GRUCell](./nn/GRUCell.py) - A single Gated Recurrent Unit cell
