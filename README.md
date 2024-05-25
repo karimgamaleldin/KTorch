@@ -8,9 +8,8 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
 
 - The project is currently in development
 - Implemented and Ready-to-use Machine Learning Algorithms, Neural Network layers, and others can be found in the `Features & Algorithms` section
-- Under Testing:
-  - Transformers, Conv2D, Layer normalization, Batch normalization
-  - Ensemble Models, PCA
+- Under Development:
+  - Transformers and related layers, Layer normalization, Batch normalization
 
 ## Tech Stack
 
