@@ -22,7 +22,7 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
 
 ## Features & Algorithms
 
-The following algorithms are implemented, tested, and used on different datasets, which can be found in [Example Notebooks](./examples_notebooks/):
+The following algorithms are implemented and tested.
 
 <details>
 <summary>Machine learning algorithms</summary>
@@ -154,6 +154,7 @@ This is a list of some of the sources that helped me in learning and making this
 4. [Introduction to Statistical Learning](https://www.statlearning.com/)
 5. The Elements of Statistical Learning
 6. [Pascal Poupart](https://www.youtube.com/results?search_query=pascal+poupart)
+7. [Andrej Karpathy](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ)
 
 ## License
 
