@@ -20,6 +20,8 @@ KTorch is a dedicated repository for machine learning and deep learning algorith
   
 </div>
 
+Code format was maintained by [Black](https://black.readthedocs.io/en/stable/).
+
 ## Features & Algorithms
 
 The following algorithms are implemented, tested, and used on different datasets, which can be found in [Example Notebooks](./examples_notebooks/):
@@ -40,6 +42,8 @@ The following algorithms are implemented, tested, and used on different datasets
 - [Support Vector Classifier](./algorithms/svm/SVC.py)
 - [Decision Tree Regressor](./algorithms/tree/DecisionTreeRegressor.py)
 - [Decision Tree Classifier](./algorithms/tree/DecisionTreeClassifier.py)
+- [Random Forest Classifier](./algorithms/ensemble/RandomForestClassifier.py)
+- [Random Forest Regressor](./algorithms/ensemble/RandomForestRegressor.py)
 </details>
 
 <details>
