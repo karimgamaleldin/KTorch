@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def euclidean_distance(x1, x2, axis=1):
+def euclidean_distance(x1, x2, axis=1, sqrt=True):
     """
     Compute the Euclidean distance between two points.
 
@@ -12,7 +12,9 @@ def euclidean_distance(x1, x2, axis=1):
     Returns:
       - distance: Euclidean distance between the two points (float)
     """
-    return np.sqrt(np.sum((x1 - x2) ** 2, axis=axis))
+    if sqrt:
+      return np.sqrt(np.sum((x1 - x2) ** 2, axis=axis))
+    return np.sum((x1 - x2) ** 2, axis=axis)
 
 
 def manhattan_distance(x1, x2, axis=1):

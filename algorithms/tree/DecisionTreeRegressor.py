@@ -1,4 +1,4 @@
-from core.algorithm_interfaces.DecisionTreeInterface import DecisionTreeInterface
+from algorithms.tree.DecisionTreeInterface import DecisionTreeInterface
 from utils.RegressionMetrics import (
     mean_squared_error,
     friedman_mse,

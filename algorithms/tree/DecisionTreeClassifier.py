@@ -1,4 +1,4 @@
-from core.algorithm_interfaces.DecisionTreeInterface import DecisionTreeInterface
+from algorithms.tree.DecisionTreeInterface import DecisionTreeInterface
 from utils.ClassificationMetrics import accuracy_score, gini_index, entropy
 import numpy as np
 

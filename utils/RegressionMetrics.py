@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def mean_squared_error(y_true, y_pred):
+def mean_squared_error(y_true, y_pred, weights=None):
     """
     Mean Squared Error (MSE)
 
@@ -12,8 +12,9 @@ def mean_squared_error(y_true, y_pred):
     Returns:
       - score: MSE score
     """
+    if weights is not None:
+        return np.mean(weights * np.square(y_true - y_pred))
     return np.mean(np.square(y_true - y_pred))
-
 
 def mean_absolute_error(y_true, y_pred):
     """

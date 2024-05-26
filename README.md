@@ -3,6 +3,7 @@
 ## Motivation
 
 KTorch is a dedicated repository for machine learning and deep learning algorithms. It contains implementations of popular machine learning algorithms, neural network layers, an autograd engine, and much more, all built using object-oriented programming (OOP) principles.
+
 ## Build Status
 
 - The project is currently in development
@@ -43,6 +44,10 @@ The following algorithms are implemented and tested.
 - [Decision Tree Classifier](./algorithms/tree/DecisionTreeClassifier.py)
 - [Random Forest Classifier](./algorithms/ensemble/RandomForestClassifier.py)
 - [Random Forest Regressor](./algorithms/ensemble/RandomForestRegressor.py)
+- [Locally Weighted Regressor](./algorithms/non_parametric/LocallyWeightedRegressor.py)
+- [AdaBoostClassifier](./algorithms/ensemble/AdaBoostClassifier.py)
+- [GradientBoostingClassifier](./algorithms/ensemble/GradientBoostingClassifier.py)
+- [GradientBoostingRegressor](./algorithms/ensemble/GradientBoostingRegressor.py)
 </details>
 
 <details>
