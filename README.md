@@ -44,7 +44,7 @@ The following algorithms are implemented and tested.
 - [Decision Tree Classifier](./algorithms/tree/DecisionTreeClassifier.py)
 - [Random Forest Classifier](./algorithms/ensemble/RandomForestClassifier.py)
 - [Random Forest Regressor](./algorithms/ensemble/RandomForestRegressor.py)
-- [Locally Weighted Regressor](./algorithms/non_parametric/LocallyWeightedRegressor.py)
+- [Locally Weighted Regressor](./algorithms/extra_regressors/LocallyWeightedRegressor.py)
 - [Perceptron](./algorithms/linear_model/Perceptron.py)
 - [AdaBoostClassifier](./algorithms/ensemble/AdaBoostClassifier.py)
 - [GradientBoostingClassifier](./algorithms/ensemble/GradientBoostingClassifier.py)
