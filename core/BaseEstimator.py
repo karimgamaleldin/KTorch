@@ -1,6 +1,3 @@
-from utils.RegressionMetrics import mean_squared_error
-
-
 class BaseEstimator:
     """
     Base class for all algorithms for example: linear regression, logistic regression, decision tree, random forest, etc.
@@ -58,7 +55,7 @@ class BaseEstimator:
           - score: Evaluation score (float)
         """
         if metric is None:
-            metric = self.base_metric
+            metric = self._base_metric
         predictions = self.predict(X)
         return metric(y_true=y, y_pred=predictions)
 

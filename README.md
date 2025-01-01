@@ -49,6 +49,7 @@ The following algorithms are implemented and tested.
 - [AdaBoostClassifier](./algorithms/ensemble/AdaBoostClassifier.py)
 - [GradientBoostingClassifier](./algorithms/ensemble/GradientBoostingClassifier.py)
 - [GradientBoostingRegressor](./algorithms/ensemble/GradientBoostingRegressor.py)
+- [KMeans & KMeans++](./algorithms/cluster/KMeans.py)
 </details>
 
 <details>

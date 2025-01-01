@@ -1,1 +1,2 @@
 from .BaseEstimator import BaseEstimator
+from .BaseUnsupervisedEstimator import BaseUnsupervisedEstimator

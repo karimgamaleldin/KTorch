@@ -60,10 +60,6 @@ class LocallyWeightedRegressor(BaseEstimator):
       x_i = np.concatenate(([1], X[i])) # Add a bias term to the input data
       y_pred[i] = x_i @ theta # Calculate the prediction for the input data
     return y_pred
-
-  def evaluate(self, X, y, metric):
-    preds = self.predict(X)
-    return metric(y, preds)
   
   def score(self, X, y):
     return self.evaluate(X, y, self.base_metric)
