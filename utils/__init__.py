@@ -18,5 +18,5 @@ from .RegressionMetrics import (
 from .Kernels import linear_kernel, polynomial_kernel, rbf_kernel, sigmoid_kernel
 from .DistanceMetrics import euclidean_distance, manhattan_distance, minkowski_distance
 from .Functions import softmax, sigmoid
-from .ClusteringMetrics import inertia, silehouette_score, davies_bouldin_score, dunns_index
+from .ClusteringMetrics import inertia, silehouette_score, davies_bouldin_score, dunns_index, l1_norm_of_residuals
 from .Data_Manipulation import validate_convert_to_numpy

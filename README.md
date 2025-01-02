@@ -50,6 +50,7 @@ The following algorithms are implemented and tested.
 - [GradientBoostingClassifier](./algorithms/ensemble/GradientBoostingClassifier.py)
 - [GradientBoostingRegressor](./algorithms/ensemble/GradientBoostingRegressor.py)
 - [KMeans & KMeans++](./algorithms/cluster/KMeans.py)
+- [KMedians](./algorithms/cluster/KMedians.py)
 </details>
 
 <details>

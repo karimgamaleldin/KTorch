@@ -15,6 +15,21 @@ def inertia(X, centroids, labels):
         inertia_sum += np.sum((X[labels == i] - centroids[i]) ** 2)
     return inertia_sum
 
+def l1_norm_of_residuals(X, centroids, labels):
+    """
+    Calculate the L1 norm of residuals of the clusters
+    Params:
+      - X: Input features (numpy array)
+      - centroids: Cluster centroids (numpy array)
+      - labels: Cluster labels (numpy array)
+    Returns:
+      - L1_norm: L1 norm of residuals of the clusters (float)
+    """
+    L1_norm = 0
+    for i in range(len(centroids)):
+        L1_norm += np.sum(np.abs(X[labels == i] - centroids[i]))
+    return L1_norm
+
 def silehouette_score(X, labels):
     """
     Calculate the silhouette score of the clusters
