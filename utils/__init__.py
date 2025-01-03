@@ -20,3 +20,4 @@ from .DistanceMetrics import euclidean_distance, manhattan_distance, minkowski_d
 from .Functions import softmax, sigmoid
 from .ClusteringMetrics import inertia, silehouette_score, davies_bouldin_score, dunns_index, l1_norm_of_residuals
 from .Data_Manipulation import validate_convert_to_numpy
+from .SimilarityMetrics import cosine_similarity

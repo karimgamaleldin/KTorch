@@ -12,9 +12,10 @@ def euclidean_distance(x1, x2, axis=1, sqrt=True):
     Returns:
       - distance: Euclidean distance between the two points (float)
     """
+    norm = np.linalg.norm(x1 - x2, axis=axis)
     if sqrt:
-      return np.sqrt(np.sum((x1 - x2) ** 2, axis=axis))
-    return np.sum((x1 - x2) ** 2, axis=axis)
+      return np.sqrt(norm)
+    return norm
 
 
 def manhattan_distance(x1, x2, axis=1):

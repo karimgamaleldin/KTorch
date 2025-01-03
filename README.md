@@ -51,6 +51,7 @@ The following algorithms are implemented and tested.
 - [GradientBoostingRegressor](./algorithms/ensemble/GradientBoostingRegressor.py)
 - [KMeans & KMeans++](./algorithms/cluster/KMeans.py)
 - [KMedians](./algorithms/cluster/KMedians.py)
+- [AgglomerativeClustering (Hierarchical Clustering)](./algorithms/cluster/AgglomerativeClustering.py)
 </details>
 
 <details>
